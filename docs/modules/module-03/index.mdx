@@ -1,0 +1,39 @@
+---
+title: "Module 3 — Prompt Files : commandes slash reutilisables"
+sidebar_position: 3
+---
+
+# Module 3 — Prompt Files : commandes slash reutilisables
+
+**Duree : 1h 30m** | **Jour 3**
+
+## Objectif
+
+Transformer les taches recurrentes en commandes slash reutilisables que tout membre de l'equipe peut invoquer.
+
+## Theorie (45 min)
+
+Un prompt file est un fichier Markdown qui encode une tache — son contexte, instructions, contraintes et format de sortie attendu — en tant que commande slash reutilisable.
+
+### Distinction cle
+
+Un prompt file gere une tache specifique, invoquee par un humain. Ce n'est pas un agent. Il n'a pas d'etat persistant. Il n'execute pas de scripts. Quand une tache necessite plusieurs etapes, des scripts et une execution autonome, c'est un skill (Module 4) ou un custom agent (Module 5).
+
+### Sujets couverts
+
+- Structure des fichiers `.prompt.md` et frontmatter (`mode`, `description`, `tools`)
+- Comment referencer des fichiers d'instructions et d'autres fichiers projet
+- Parametrisation : utiliser des variables pour rendre les prompts reutilisables
+- Principes de conception de prompts : contexte d'abord, puis tache, puis contraintes, puis format de sortie
+- Comment tester et iterer sur un prompt avec le framework de qualite
+- Quand utiliser un prompt file vs. un custom agent
+
+## Lab (45 min)
+
+Voir les labs correspondants :
+- [Lab Java](/labs/java)
+- [Lab .NET](/labs/dotnet)
+
+### Livrable
+
+Deux commandes slash fonctionnelles (`/review-code` et `/generate-tests`) commises dans le repository, testees et affinees sur des classes reelles du projet.

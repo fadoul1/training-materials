@@ -1,0 +1,39 @@
+---
+title: "Module 2 — Custom Instructions : regles Always-On et File-Based"
+sidebar_position: 2
+---
+
+# Module 2 — Custom Instructions : regles Always-On et File-Based
+
+**Duree : 1h 00m** | **Jour 2**
+
+## Objectif
+
+Apprendre a Copilot tout ce qu'il doit savoir sur votre projet, une seule fois, pour qu'il applique ces connaissances automatiquement a chaque requete.
+
+## Theorie (30 min)
+
+Il existe deux types d'instructions personnalisees dans VS Code :
+
+- **Always-on instructions** — fichier `copilot-instructions.md` automatiquement inclus dans chaque requete Copilot
+- **File-based instructions** — fichiers `*.instructions.md` avec patterns `applyTo` qui s'activent selon le fichier ouvert
+
+### Sujets couverts
+
+- Structure, placement et strategie de contenu de `copilot-instructions.md`
+- Utilisation de `/init` pour generer un fichier d'instructions de base
+- Ce qui appartient aux instructions always-on vs. file-based
+- Structure des fichiers `*.instructions.md` et syntaxe des patterns `applyTo`
+- Activation basee sur la description vs. basee sur le chemin
+- Superposition de regles file-based sur les instructions always-on sans conflits
+- Framework d'evaluation de la qualite des suggestions
+
+## Lab (30 min)
+
+Voir les labs correspondants :
+- [Lab Java](/labs/java)
+- [Lab .NET](/labs/dotnet)
+
+### Livrable
+
+Une configuration d'instructions commise dans le repository — `copilot-instructions.md` + un fichier `*.instructions.md`, verifiee avec la sortie Copilot en direct.

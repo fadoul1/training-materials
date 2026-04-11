@@ -1,0 +1,37 @@
+---
+title: "Module 4 — Agent Skills : automatisation multi-etapes avec scripts"
+sidebar_position: 4
+---
+
+# Module 4 — Agent Skills : automatisation multi-etapes avec scripts
+
+**Duree : 1h 30m** | **Jour 4**
+
+## Objectif
+
+Packager des workflows automatises multi-etapes en skills que Copilot peut declencher et executer sans prompting manuel a chaque etape.
+
+## Theorie (30 min)
+
+Un agent skill n'est pas un prompt. C'est un dossier contenant un fichier de description `SKILL.md`, des scripts et des ressources de support. Quand une tache correspond a la description du skill, Copilot active le skill, execute ses scripts et utilise la sortie structuree pour piloter l'action suivante.
+
+Les skills sont un standard ouvert ([agentskills.io](https://agentskills.io)) qui fonctionne sur VS Code, le GitHub Copilot CLI et le GitHub Copilot coding agent.
+
+### Sujets couverts
+
+- Structure de dossier d'un skill : `SKILL.md`, `scripts/`, `references/`, `assets/`
+- Ecriture d'une description `SKILL.md` qui se declenche de maniere fiable
+- Principes de conception de scripts : produire une sortie structuree (JSON ou texte)
+- Comment l'agent lit la sortie du script et genere l'action suivante
+- Reutilisabilite cross-tool : le meme skill dans VS Code, CLI et coding agent
+- Extensions optionnelles : appels HTTP, lecture/ecriture de fichiers externes
+
+## Lab (1 heure)
+
+Voir les labs correspondants :
+- [Lab Java](/labs/java)
+- [Lab .NET](/labs/dotnet)
+
+### Livrable
+
+Un skill test-runner fonctionnel qui s'active automatiquement et produit des suggestions de correction exploitables a partir de vrais echecs de tests.

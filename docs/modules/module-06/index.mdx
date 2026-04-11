@@ -1,0 +1,50 @@
+---
+title: "Module 6 — Workflow End-to-End et Projet Final"
+sidebar_position: 6
+---
+
+# Module 6 — Workflow End-to-End et Projet Final
+
+**Duree : 2h 00m** | **Jour 6**
+
+## Objectif
+
+Appliquer l'ensemble des mecanismes sur un cycle de vie complet de fonctionnalite et livrer un environnement Copilot personnel complet.
+
+## Partie A — Workflow End-to-End (40 min)
+
+Un scenario unique qui exerce chaque mecanisme construit lors des Modules 1 a 5, en sequence :
+
+1. Lire une specification de fonctionnalite avec `@workspace`
+2. Generer un squelette de code — les instructions always-on et file-based formatent la sortie
+3. Generer des tests unitaires — invoquer `/generate-tests` (Module 3)
+4. Executer les tests et obtenir des suggestions — le skill test-runner (Module 4) s'active
+5. Refactorer l'implementation — le custom agent (Module 5) applique les corrections Clean Code
+6. Revue du resultat final — invoquer `/review-code` (Module 3)
+7. Evaluer la sortie complete avec le framework de qualite (Module 1)
+
+## Partie B — Projet Final (1 heure)
+
+Chaque participant concoit un environnement Copilot complet pour un projet reel ou representatif de son choix.
+
+### Livrables requis
+
+- `copilot-instructions.md` — instructions always-on adaptees a l'architecture du projet
+- Au moins un `*.instructions.md` — regle file-based pour une couche ou type de fichier specifique
+- Deux prompt files — commandes slash parametrisees et reutilisables
+- Un agent skill — complet avec `SKILL.md` et au moins un script fonctionnel
+- Un custom agent — avec system prompt, restrictions d'outils et limites de scope verifiees
+
+### Grille d'evaluation
+
+| Critere | Poids |
+|---------|-------|
+| Instructions adaptees a l'architecture et conventions du projet | 20% |
+| Prompt files parametrises avec sortie coherente | 20% |
+| Skill qui s'active de maniere fiable avec sortie structuree | 20% |
+| Custom agent avec scope bien defini et restrictions d'outils | 20% |
+| Tous les artefacts fonctionnent ensemble comme un systeme coherent | 20% |
+
+### Debrief (15 min)
+
+Chaque participant presente un artefact et explique une decision de conception et son pourquoi.

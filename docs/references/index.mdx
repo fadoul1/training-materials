@@ -1,0 +1,65 @@
+---
+title: Ressources
+sidebar_position: 1
+---
+
+# Ressources
+
+## Documentation officielle
+
+- [GitHub Copilot Documentation](https://docs.github.com/en/copilot)
+- [VS Code Copilot Overview](https://code.visualstudio.com/docs/copilot/overview)
+- [Custom Instructions](https://code.visualstudio.com/docs/copilot/copilot-customization)
+- [Agent Skills (agentskills.io)](https://agentskills.io)
+
+## Les 5 mecanismes de personnalisation
+
+| Mecanisme | Ce qu'il fait |
+|-----------|---------------|
+| Always-on instructions | Enseigne a Copilot vos standards et architecture — applique a chaque requete |
+| File-based instructions | Applique des regles differentes selon les parties du codebase |
+| Prompt files | Commandes slash reutilisables pour les taches recurrentes |
+| Agent skills | Workflows automatises multi-etapes avec scripts |
+| Custom agents | Personas IA specialisees avec scope et outils controles |
+
+## Fichiers de reference — Parcours Java
+
+| Type | Fichier |
+|------|---------|
+| Always-on | [copilot-instructions.md](pathname:///resources/java/copilot-instructions.md) |
+| Instructions | [tests.instructions.md](pathname:///resources/java/instructions/tests.instructions.md) |
+| Prompt | [review-code.prompt.md](pathname:///resources/java/prompts/review-code.prompt.md) |
+| Prompt | [generate-tests.prompt.md](pathname:///resources/java/prompts/generate-tests.prompt.md) |
+| Prompt | [explain-architecture.prompt.md](pathname:///resources/java/prompts/explain-architecture.prompt.md) |
+| Skill | [run-and-fix-tests/SKILL.md](pathname:///resources/java/skills/run-and-fix-tests/SKILL.md) |
+| Skill | [call-employee-api/SKILL.md](pathname:///resources/java/skills/call-employee-api/SKILL.md) |
+| Agent | [refactoring-expert.agent.md](pathname:///resources/java/agents/refactoring-expert.agent.md) |
+| Agent | [spring-migration-expert.agent.md](pathname:///resources/java/agents/spring-migration-expert.agent.md) |
+
+## Fichiers de reference — Parcours .NET
+
+| Type | Fichier |
+|------|---------|
+| Always-on | [copilot-instructions.md](pathname:///resources/dotnet/copilot-instructions.md) |
+| Instructions | [tests.instructions.md](pathname:///resources/dotnet/instructions/tests.instructions.md) |
+| Instructions | [handlers.instructions.md](pathname:///resources/dotnet/instructions/handlers.instructions.md) |
+| Instructions | [migrations.instructions.md](pathname:///resources/dotnet/instructions/migrations.instructions.md) |
+| Prompt | [review-code.prompt.md](pathname:///resources/dotnet/prompts/review-code.prompt.md) |
+| Prompt | [generate-feature.prompt.md](pathname:///resources/dotnet/prompts/generate-feature.prompt.md) |
+| Prompt | [explain-architecture.prompt.md](pathname:///resources/dotnet/prompts/explain-architecture.prompt.md) |
+| Skill | [run-and-fix-tests/SKILL.md](pathname:///resources/dotnet/skills/run-and-fix-tests/SKILL.md) |
+| Skill | [ef-core-migration/SKILL.md](pathname:///resources/dotnet/skills/ef-core-migration/SKILL.md) |
+| Agent | [clean-architecture-refactor-expert.agent.md](pathname:///resources/dotnet/agents/clean-architecture-refactor-expert.agent.md) |
+| Agent | [dotnet-upgrade-expert.agent.md](pathname:///resources/dotnet/agents/dotnet-upgrade-expert.agent.md) |
+
+## Glossaire
+
+| Terme | Definition |
+|-------|-----------|
+| `copilot-instructions.md` | Fichier d'instructions always-on inclus dans chaque requete |
+| `*.instructions.md` | Fichier d'instructions file-based avec pattern `applyTo` |
+| `.prompt.md` | Fichier prompt qui definit une commande slash reutilisable |
+| `SKILL.md` | Fichier de description d'un agent skill |
+| `@workspace` | Chat participant qui donne a Copilot le contexte du workspace |
+| `@vscode` | Chat participant pour les commandes VS Code |
+| `@terminal` | Chat participant pour le contexte du terminal |

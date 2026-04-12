@@ -13,7 +13,6 @@ transition: slide-left
 
 <br>
 
-**Accenture Technology**
 
 <!--
 Bienvenue dans cette formation de 6 jours dediee a GitHub Copilot.
@@ -33,12 +32,13 @@ layout: section
 <v-clicks>
 
 1. **Qu'est-ce que GitHub Copilot ?** — Bien plus qu'un auto-completeur
-2. **L'interface Copilot dans VS Code** — Tour complet de l'outil graphique
-3. **Les modes d'interaction** — Inline, Chat, Agent, Edits
-4. **Les Chat Participants** — `@workspace`, `@vscode`, `@terminal`
-5. **Selection de modeles** — Rapide vs. Raisonnement
-6. **Les 5 primitives de personnalisation** — La feuille de route des 6 jours
-7. **Demo avant/apres** — L'impact de la configuration sur les suggestions
+2. **Contexte et Tokens** — Les concepts fondamentaux pour comprendre le comportement de Copilot
+3. **L'interface Copilot dans VS Code** — Tour complet de l'outil graphique
+4. **Les modes d'interaction** — Inline, Chat, Agent, Plan
+5. **Les Chat Participants** — `@workspace`, `@vscode`, `@terminal`
+6. **Selection de modeles** — Rapide vs. Raisonnement
+7. **Les 5 primitives de personnalisation** — La feuille de route des 6 jours
+8. **Demo avant/apres** — L'impact de la configuration sur les suggestions
 
 </v-clicks>
 
@@ -107,6 +107,15 @@ graph LR
     F --> G[Suggestion]
 ```
 
+<!--
+Le contexte est TOUT. Si Copilot ne voit pas l'information, il ne peut pas l'utiliser.
+C'est pourquoi la configuration est si importante.
+-->
+
+---
+
+# Ce qui compose le contexte
+
 <v-clicks>
 
 - **Fichier actif** — Le code que vous editez en ce moment
@@ -116,10 +125,134 @@ graph LR
 
 </v-clicks>
 
+<br>
+
+<v-click>
+
+> Si Copilot ne voit pas l'information, il ne peut pas l'utiliser. La configuration, c'est la facon dont vous **controlez ce contexte**.
+
+</v-click>
+
+---
+layout: section
+---
+
+# Contexte et Tokens — Les fondamentaux
+
+---
+
+# La fenetre de contexte
+
+> La **fenetre de contexte** est la quantite maximale de texte que le modele peut traiter en une seule requete. Tout ce qui depasse cette limite est invisible pour Copilot.
+
+<br>
+
+<v-clicks>
+
+- Chaque requete est **stateless** — le modele ne "se souvient" de rien entre les sessions
+- Ce qui entre dans la fenetre : fichier actif, onglets ouverts, instructions, historique de conversation
+- Ce qui depasse la limite est **tronque** — Copilot ne le voit tout simplement pas
+- Taille typique : **128k tokens** (GPT-4o) · **200k tokens** (Claude Sonnet)
+
+</v-clicks>
+
 <!--
-Le contexte est TOUT. Si Copilot ne voit pas l'information, il ne peut pas l'utiliser.
-C'est pourquoi la configuration est si importante.
+C'est pour ca que "ouvrir les bons onglets" et "avoir des instructions concises" n'est pas un detail — c'est strategique.
 -->
+
+---
+
+# Les tokens — L'unite de mesure des LLM
+
+> Un **token** n'est pas un mot. C'est un fragment de texte : environ **4 caracteres** en anglais, souvent **moins en code**.
+
+<br>
+
+<v-clicks>
+
+| Texte | Tokens approx. |
+|-------|---------------|
+| `function` | 1 token |
+| `createEmployee` | 3 tokens |
+| `// Calcule le total HT` | 6 tokens |
+| `public class EmployeeService {` | 7 tokens |
+| Un fichier de 100 lignes de Java | ~400–600 tokens |
+| Un `copilot-instructions.md` de 2000 mots | ~2500–3000 tokens |
+
+</v-clicks>
+
+---
+
+# Tokens en input vs. output
+
+<v-clicks>
+
+**Input tokens** — ce qui entre dans le modele :
+- Votre question / prompt
+- Le fichier actif et les onglets ouverts
+- Les instructions (`copilot-instructions.md`)
+- L'historique de la conversation en cours
+
+**Output tokens** — ce que le modele genere :
+- La reponse texte ou le code produit
+
+</v-clicks>
+
+<br>
+
+<v-click>
+
+> **Consequence pratique :** Plus votre contexte (instructions + fichiers) est volumineux, moins il reste de place pour la reponse — et plus vous consommez de quota.
+
+</v-click>
+
+---
+
+# Pourquoi les tokens comptent pour vous
+
+<v-clicks>
+
+- **Instructions trop longues** → les regles importantes sont diluees au fond du contexte
+- **Trop d'onglets ouverts** → Copilot inclut des fichiers non pertinents, bruit dans le contexte
+- **`@workspace` sur un grand projet** → Copilot selectionne les fichiers les plus pertinents (pas tout le projet)
+- **Historique de conversation long** → les premiers echanges sont tronques en priorite
+
+</v-clicks>
+
+<br>
+
+<v-click>
+
+**Recommandations :**
+- `copilot-instructions.md` : visez **1500–2000 tokens** (~1200 mots)
+- Fermez les onglets non pertinents avant une session de generation
+- Utilisez `#file` pour cibler precisement les fichiers dont Copilot a besoin
+
+</v-click>
+
+---
+
+# Priorite de remplissage du contexte
+
+Quand la fenetre est pleine, Copilot priorise dans cet ordre :
+
+<v-clicks>
+
+1. **System prompt** de Copilot (invisible, gere par GitHub)
+2. **Instructions custom** (`copilot-instructions.md` + file-based)
+3. **Fichier actif** — le code que vous editez
+4. **Fichiers references** — `#file`, `@workspace`, onglets ouverts
+5. **Historique de la conversation** — tronque en premier si debordement
+
+</v-clicks>
+
+<br>
+
+<v-click>
+
+> **Ce que cela signifie :** Vos instructions sont **protegees** — elles ne seront pas tronquees avant l'historique. C'est pourquoi elles ont un impact persistant sur toute la session.
+
+</v-click>
 
 ---
 layout: section
@@ -601,9 +734,10 @@ layout: section
 
 <v-clicks>
 
-- Copilot genere des suggestions basees sur le **contexte disponible**
+- Copilot genere des suggestions basees sur le **contexte disponible** (fenetre de contexte)
+- Les **tokens** sont l'unite de mesure — contexte concis = suggestions de meilleure qualite
 - La **personnalisation** est la cle pour des suggestions alignees
-- **4 modes d'interaction** : Inline, Chat (Ask/Agent), Edits
+- **4 modes d'interaction** : Inline, Chat (Ask / Agent / Plan)
 - **3 Chat Participants** : `@workspace`, `@vscode`, `@terminal`
 - **5 primitives** de personnalisation (Instructions → Agents)
 - Un **framework d'evaluation** pour mesurer la qualite

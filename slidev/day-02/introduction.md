@@ -13,7 +13,6 @@ transition: slide-left
 
 <br>
 
-**Accenture Technology**
 
 <!--
 Bienvenue dans le Jour 2.

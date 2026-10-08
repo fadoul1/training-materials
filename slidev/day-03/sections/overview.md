@@ -1,7 +1,7 @@
 # Programme du Jour 3
 
-- Structure `.prompt.md` et frontmatter
-- Referencer des fichiers d'instructions
-- Parametrisation avec variables
-- Principes de conception de prompts
-- Prompt file vs. custom agent
+- Structure d'un skill : `SKILL.md`, `scripts/`
+- Description qui declenche correctement
+- Mecanisme de decouverte par intention
+- Les skills du projet : `run-and-fix-tests`, `ef-core-migration`
+- Ecrire un bon `SKILL.md` de zero

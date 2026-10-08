@@ -1,7 +1,7 @@
 # Programme du Jour 5
 
-- Structure Markdown d'un custom agent
-- System prompt efficace
-- Restrictions d'outils
-- Definition du scope
-- Orchestration de sous-agents
+- Scenario end-to-end complet
+- De la specification au code valide
+- Projet final : environnement Copilot complet
+- Grille d'evaluation
+- Debrief et presentations

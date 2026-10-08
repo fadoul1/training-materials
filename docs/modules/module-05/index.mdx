@@ -1,40 +1,50 @@
 ---
-title: "Module 5 — Custom Agents : personas specialisees avec scope controle"
+title: "Module 5 — Workflow End-to-End et Projet Final"
 sidebar_position: 5
 ---
 
-# Module 5 — Custom Agents : personas specialisees avec scope controle
+# Module 5 — Workflow End-to-End et Projet Final
 
-**Duree : 1h 00m** | **Jour 5**
+**Duree : 2h 00m** | **Jour 5**
 
 ## Objectif
 
-Creer des personas IA specialisees avec un scope controle, un acces aux outils limite et la capacite d'orchestrer d'autres agents pour du travail multi-etapes.
+Appliquer l'ensemble des mecanismes sur un cycle de vie complet de fonctionnalite et livrer un environnement Copilot personnel complet.
 
-## Theorie (30 min)
+## Partie A — Workflow End-to-End (40 min)
 
-Un custom agent est une persona IA persistante definie dans un fichier Markdown. Il a son propre system prompt, son propre ensemble d'outils autorises, ses propres preferences de modele et ses propres limites de scope.
+Un scenario unique qui exerce chaque mecanisme construit lors des Modules 1 a 4, en sequence :
 
-### Concepts cles
+1. Lire une specification de fonctionnalite avec `@workspace`
+2. Generer un squelette de code — les instructions always-on et file-based formatent la sortie
+3. Generer des tests unitaires — invoquer `/generate-tests` (Module 2)
+4. Executer les tests et obtenir des suggestions — le skill test-runner (Module 3) s'active
+5. Refactorer l'implementation — le custom agent (Module 4) applique les corrections Clean Code
+6. Revue du resultat final — invoquer `/review-code` (Module 2)
+7. Evaluer la sortie complete avec le framework de qualite (Module 1)
 
-- **Restrictions d'outils** — vous pouvez lister explicitement quels outils l'agent peut utiliser
-- **Orchestration de sous-agents** — un agent peut deleguer une sous-tache a un autre agent specialise
+## Partie B — Projet Final (1 heure)
 
-### Sujets couverts
+Chaque participant concoit un environnement Copilot complet pour un projet reel ou representatif de son choix.
 
-- Structure Markdown d'un custom agent : frontmatter, system prompt, `tools`, `model`
-- Comment ecrire un system prompt suffisamment specifique sans etre trop restrictif
-- Restrictions explicites d'outils : pourquoi limiter les outils est une fonctionnalite
-- Definition du scope : ce que l'agent doit faire et ce qu'il ne doit pas faire
-- Orchestration de sous-agents : `delegate`, passage de contexte, reprise
-- Archetypes d'agents : refactoring agent, migration agent, security audit agent
+### Livrables requis
 
-## Lab (30 min)
+- `copilot-instructions.md` — instructions always-on adaptees a l'architecture du projet
+- Au moins un `*.instructions.md` — regle file-based pour une couche ou type de fichier specifique
+- Deux prompt files — commandes slash parametrisees et reutilisables
+- Un agent skill — complet avec `SKILL.md` et au moins un script fonctionnel
+- Un custom agent — avec system prompt, restrictions d'outils et limites de scope verifiees
 
-Voir les labs correspondants :
-- [Lab Java](/labs/java)
-- [Lab .NET](/labs/dotnet)
+### Grille d'evaluation
 
-### Livrable
+| Critere | Poids |
+|---------|-------|
+| Instructions adaptees a l'architecture et conventions du projet | 20% |
+| Prompt files parametrises avec sortie coherente | 20% |
+| Skill qui s'active de maniere fiable avec sortie structuree | 20% |
+| Custom agent avec scope bien defini et restrictions d'outils | 20% |
+| Tous les artefacts fonctionnent ensemble comme un systeme coherent | 20% |
 
-Un custom agent de refactoring fonctionnel, avec des limites de scope verifiees et au moins une tache completee demontree.
+### Debrief (15 min)
+
+Chaque participant presente un artefact et explique une decision de conception et son pourquoi.

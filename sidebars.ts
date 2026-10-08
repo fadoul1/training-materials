@@ -12,7 +12,6 @@ const sidebars: SidebarsConfig = {
         'modules/module-03/index',
         'modules/module-04/index',
         'modules/module-05/index',
-        'modules/module-06/index',
       ],
     },
     {

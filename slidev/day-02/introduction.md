@@ -1,6 +1,6 @@
 ---
-title: "Jour 2 — Custom Instructions : Always-On et File-Based"
-description: "Construire un copilot-instructions.md efficace et des instructions contextuelles par couche applicative"
+title: "Jour 2 — Custom Instructions et Prompt Files"
+description: "Construire un copilot-instructions.md efficace, des instructions contextuelles, et encoder vos workflows en commandes slash"
 author: Accenture
 theme: default
 highlighter: shiki
@@ -9,7 +9,7 @@ transition: slide-left
 
 # GitHub Copilot in Practice
 
-## Jour 2 — Custom Instructions : Always-On et File-Based
+## Jour 2 — Custom Instructions et Prompt Files
 
 <br>
 
@@ -31,13 +31,23 @@ layout: section
 
 <v-clicks>
 
+**Partie 1 — Custom Instructions**
+
 1. **Rappel** — Les 5 primitives et ou on en est
 2. **Primitive 1 : Always-On Instructions** — `copilot-instructions.md`, structure, bonnes pratiques
 3. **Le bootstrap `/init`** — Generer un premier fichier d'instructions automatiquement
 4. **Primitive 2 : File-Based Instructions** — `*.instructions.md` + `applyTo` glob patterns
 5. **Strategie multicouche** — Combiner always-on et file-based intelligemment
 6. **Demo avant/apres** — Voir l'impact des deux primitives en direct
-7. **Labs 01 et 02** — Vous construisez vos propres fichiers d'instructions
+7. **Lab Partie 1** — Vous construisez vos propres fichiers d'instructions
+
+**Partie 2 — Prompt Files**
+
+8. **Primitive 3 : Prompt Files** — Fichiers `.prompt.md`, frontmatter, modes
+9. **Variables `${input:x}`** — Rendre les prompts parametrables
+10. **Ask vs. Agent** — Choisir le bon mode d'execution
+11. **Demo** — Voir `/review-code` et `/generate-feature` en action
+12. **Lab Partie 2** — Vous creez vos propres commandes slash
 
 </v-clicks>
 
@@ -60,9 +70,9 @@ layout: section
 |---|-----------|-----------------|------|
 | **1** | **Always-On Instructions** | Standards et architecture du projet | **Aujourd'hui** |
 | **2** | **File-Based Instructions** | Regles specifiques par type de fichier | **Aujourd'hui** |
-| 3 | Prompt Files | Commandes slash reutilisables | Jour 3 |
-| 4 | Skills | Workflows multi-etapes avec scripts | Jour 4 |
-| 5 | Custom Agents | Personas IA specialisees | Jour 5 |
+| **3** | **Prompt Files** | Commandes slash reutilisables | **Aujourd'hui** |
+| 4 | Skills | Workflows multi-etapes avec scripts | Jour 3 |
+| 5 | Custom Agents | Personas IA specialisees | Jour 4 |
 
 <br>
 
@@ -536,11 +546,11 @@ layout: section
 layout: section
 ---
 
-# Recapitulatif
+# Recapitulatif — Partie 1
 
 ---
 
-# Ce que vous savez maintenant
+# Ce que vous savez maintenant (Custom Instructions)
 
 <v-clicks>
 
@@ -566,17 +576,96 @@ layout: section
 | Les validators | `validators.instructions.md` (`applyTo: **/Features/**/*Validator.cs`) |
 
 ---
+layout: section
+---
 
-# Demain — Jour 3
+# Primitive 3 — Prompt Files
 
-## Prompt Files : commandes slash reutilisables
+---
+
+# Qu'est-ce qu'un Prompt File ?
+
+> Un **Prompt File** est un template de tache reutilisable, invoque avec une commande `/`. C'est une macro pour les workflows que vous executez regulierement.
+
+<br>
 
 <v-clicks>
 
-- Creer `/review-code` — revue de code structuree et reproductible
-- Creer `/generate-feature` — scaffolding complet d'un feature CQRS
-- Utiliser `${input:variable}` pour des prompts parametres
-- Choisir le bon mode d'execution : `ask` vs. `agent`
+**Sans Prompt File :**
+- Vous retapez le meme prompt de revue de code chaque semaine
+- Chaque developpeur le formule differemment → resultats inconsistants
+
+**Avec Prompt File :**
+- `/review-code` — meme revue, meme structure, chaque fois
+- `/generate-feature` — scaffolding complet en une commande
+- Toute l'equipe utilise les memes workflows → coherence garantie
+
+</v-clicks>
+
+---
+
+# Instructions vs. Prompts — La difference fondamentale
+
+| | Instructions | Prompts |
+|---|-------------|---------|
+| **Declenchement** | Automatique (toujours) | Explicite (`/commande`) |
+| **Role** | Definir un **comportement** | Definir une **tache** |
+| **Exemple** | "Toujours utiliser les constructeurs primaires" | "Maintenant, fais CETTE revue de code" |
+| **Frequence** | Chaque session | A la demande |
+| **Parametre** | Non | Oui (`${input:variable}`) |
+
+<br>
+
+<v-click>
+
+> **Regle simple :** Instructions = *comment* Copilot doit se comporter. Prompts = *quoi* Copilot doit faire maintenant.
+
+</v-click>
+
+---
+
+# Anatomie d'un Prompt File
+
+```
+.github/
+└── prompts/
+    └── review-code.prompt.md    ← doit finir par .prompt.md
+```
+
+<br>
+
+```yaml
+---
+name: review-code          ← apparait dans le menu /
+description: "..."         ← texte d'aide affiché dans le chat
+mode: ask                  ← ask | agent
+---
+```
+
+<v-clicks>
+
+- **`name`** — le slug de la commande slash (sans espaces)
+- **`description`** — aide les developpeurs a comprendre quand utiliser ce prompt
+- **`mode`** — definit si Copilot peut modifier des fichiers ou non
+
+</v-clicks>
+
+---
+
+# Les deux modes d'execution
+
+| Mode | Ce qu'il fait | Quand l'utiliser |
+|------|--------------|-----------------|
+| **`ask`** | Lecture seule, conversationnel | Revue, explication, brainstorming |
+| **`agent`** | Cree et modifie des fichiers, execute des commandes | Scaffolding, generation de code, corrections |
+
+<br>
+
+<v-clicks>
+
+**Exemples :**
+- `/review-code` → `mode: ask` — Copilot lit et commente, ne touche pas aux fichiers
+- `/generate-feature` → `mode: agent` — Copilot cree les fichiers, le handler, les tests
 
 </v-clicks>
 
@@ -584,7 +673,105 @@ layout: section
 
 <v-click>
 
-**Labs : vous allez encoder vos workflows d'equipe en commandes reutilisables.**
+> **Regle de securite :** Utilisez `ask` par defaut. Ne passez a `agent` que si le prompt doit creer ou modifier des fichiers.
+
+</v-click>
+
+---
+
+# Variables `${input:x}` — Prompts parametrables
+
+Sans variable, le prompt est lie a une entite specifique :
+
+```markdown
+Genere les fichiers CQRS pour l'entite Employee...
+```
+
+<br>
+
+Avec `${input:variable}`, un seul prompt couvre tous les cas :
+
+```markdown
+Genere les fichiers CQRS pour l'entite **${input:entityName}**
+Type d'operation : **${input:featureType}** — **${input:operation}**
+```
+
+<v-click>
+
+Quand vous tapez `/generate-feature`, Copilot vous demande :
+```
+entityName: Department
+featureType: Command
+operation: Create
+```
+
+</v-click>
+
+---
+
+# Prompt + Instructions = Resultat garanti
+
+```
+/generate-feature
+     │
+     ▼
+Prompt file          →  "Voici les etapes de scaffolding"
+     +
+copilot-instructions.md  →  "Voici les conventions du projet"
+     +
+handlers.instructions.md →  "Voici les regles du handler"
+     │
+     ▼
+Code conforme aux standards du projet, du premier coup
+```
+
+<v-click>
+
+> Le prompt definit **la tache**. Les instructions definissent **le style**. Les deux ensemble produisent un resultat coherent et reproductible.
+
+</v-click>
+
+---
+layout: section
+---
+
+# Recapitulatif — Jour 2 complet
+
+---
+
+# Ce que vous savez maintenant
+
+<v-clicks>
+
+- **`copilot-instructions.md`** charge automatiquement — il contient le brief d'onboarding du projet
+- **`*.instructions.md`** + `applyTo` ciblent les regles par couche applicative
+- Un **Prompt File** encode un workflow d'equipe en commande slash reproductible
+- Le frontmatter definit le **nom**, le **mode** (`ask`/`agent`) et la **description**
+- `${input:variable}` rend un prompt **parametrable** pour plusieurs entites
+- Prompt + Instructions = resultat **coherent** et **previsible**
+
+</v-clicks>
+
+---
+
+# Demain — Jour 3
+
+## Agent Skills : automatisation par intention
+
+<v-clicks>
+
+- Comprendre le **mecanisme de decouverte** par correspondance semantique
+- Utiliser `run-and-fix-tests` — sans taper `/`, Copilot detecte l'intention
+- Utiliser `ef-core-migration` — ajout de migration avec les bons flags
+- Ecrire un nouveau `SKILL.md` de zero en suivant le standard **agentskills.io**
+
+</v-clicks>
+
+<br>
+
+<v-click>
+
+**Labs : vous construisez un skill `setup-local-dev` qui guide l'onboarding.**
 
 </v-click>
 

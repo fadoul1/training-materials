@@ -68,15 +68,15 @@ What You Never Do  → Guardrails
 
 ### Agent 1 — Clean Architecture Refactor Expert
 
-File: [`.github/agents/clean-architecture-refactor-expert.agent.md`](pathname:///resources/dotnet/agents/refactoring-expert.agent.md)
+File: [`.github/agents/clean-architecture-refactor-expert.agent.md`](pathname:///resources/dotnet/agents/clean-architecture-refactor-expert.agent.md)
 
 **Persona:** Senior .NET architect with 20+ years experience  
 **Specialty:** Clean Architecture violations, CQRS anti-patterns, EF Core misuse, C# 14 idiom gaps  
 **Handoffs:** → Run Tests → Review Code
 
-### Agent 2 — .NET Upgrade Expert
+### Agent 2 — C# Migration Specialist
 
-File: [`.github/agents/dotnet-upgrade-expert.agent.md`](pathname:///resources/dotnet/agents/spring-migration-expert.agent.md)
+File: [`.github/agents/c-sharp-migration-specialist.md`](pathname:///resources/dotnet/agents/c-sharp-migration-specialist.md)
 
 **Persona:** Principal .NET engineer specialised in version migrations  
 **Specialty:** .NET 6/7/8 → .NET 10, `Startup.cs` → minimal API, `SpecFlow` → Reqnroll, Swashbuckle → Scalar  
@@ -129,9 +129,9 @@ Can you move the validation logic out of the handler into a static utility class
 
 ---
 
-## Exercise 3 — Run an Upgrade Assessment with the .NET Expert (15 min)
+## Exercise 3 — Run an Upgrade Assessment with the C# Migration Specialist (15 min)
 
-Switch to the **.NET Upgrade Expert** agent.
+Switch to the **C# Migration Specialist** agent.
 
 Ask:
 ```
@@ -252,7 +252,7 @@ Review this file for security issues.
 .github/
 └── agents/
     ├── clean-architecture-refactor-expert.agent.md  ← @clean-architecture-refactor-expert
-    ├── dotnet-upgrade-expert.agent.md               ← @dotnet-upgrade-expert
+    ├── c-sharp-migration-specialist.md              ← @c-sharp-migration-specialist
     └── security-reviewer.agent.md                   ← created in Exercise 4
 ```
 

@@ -1,7 +1,7 @@
 # Programme du Jour 4
 
-- Structure d'un skill : `SKILL.md`, `scripts/`
-- Description qui declenche correctement
-- Scripts avec sortie structuree
-- Reutilisabilite cross-tool
-- Extensions : HTTP, fichiers externes
+- Structure Markdown d'un custom agent
+- La formule en 5 sections : Qui / Comment je pense / Comment je reponds / Toujours / Jamais
+- Gardes-fous : pourquoi "Ce que je ne fais jamais" est crucial
+- Les agents du projet : Refactoring Expert et .NET Upgrade Expert
+- Handoffs : chaîner des agents specialistes

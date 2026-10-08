@@ -1,24 +1,28 @@
 ---
-title: "Module 2 — Custom Instructions : regles Always-On et File-Based"
+title: "Module 2 — Custom Instructions et Prompt Files"
 sidebar_position: 2
 ---
 
-# Module 2 — Custom Instructions : regles Always-On et File-Based
+# Module 2 — Custom Instructions et Prompt Files
 
-**Duree : 1h 00m** | **Jour 2**
+**Duree : 2h 30m** | **Jour 2**
 
 ## Objectif
 
-Apprendre a Copilot tout ce qu'il doit savoir sur votre projet, une seule fois, pour qu'il applique ces connaissances automatiquement a chaque requete.
+Apprendre a Copilot tout ce qu'il doit savoir sur votre projet (instructions passives), puis encoder vos workflows d'equipe en commandes slash reutilisables (prompts actifs).
 
-## Theorie (30 min)
+---
+
+## Partie 1 — Custom Instructions (1h 00m)
+
+### Theorie (30 min)
 
 Il existe deux types d'instructions personnalisees dans VS Code :
 
 - **Always-on instructions** — fichier `copilot-instructions.md` automatiquement inclus dans chaque requete Copilot
 - **File-based instructions** — fichiers `*.instructions.md` avec patterns `applyTo` qui s'activent selon le fichier ouvert
 
-### Sujets couverts
+#### Sujets couverts
 
 - Structure, placement et strategie de contenu de `copilot-instructions.md`
 - Utilisation de `/init` pour generer un fichier d'instructions de base
@@ -28,12 +32,43 @@ Il existe deux types d'instructions personnalisees dans VS Code :
 - Superposition de regles file-based sur les instructions always-on sans conflits
 - Framework d'evaluation de la qualite des suggestions
 
-## Lab (30 min)
+### Lab Partie 1 (30 min)
 
 Voir les labs correspondants :
 - [Lab Java](/labs/java)
 - [Lab .NET](/labs/dotnet)
 
-### Livrable
+#### Livrable
 
 Une configuration d'instructions commise dans le repository — `copilot-instructions.md` + un fichier `*.instructions.md`, verifiee avec la sortie Copilot en direct.
+
+---
+
+## Partie 2 — Prompt Files (1h 30m)
+
+### Theorie (45 min)
+
+Un prompt file est un fichier Markdown qui encode une tache — son contexte, instructions, contraintes et format de sortie attendu — en tant que commande slash reutilisable.
+
+#### Distinction cle
+
+Un prompt file gere une tache specifique, invoquee par un humain. Ce n'est pas un agent. Il n'a pas d'etat persistant. Il n'execute pas de scripts. Quand une tache necessite plusieurs etapes, des scripts et une execution autonome, c'est un skill (Module 3) ou un custom agent (Module 4).
+
+#### Sujets couverts
+
+- Structure des fichiers `.prompt.md` et frontmatter (`mode`, `description`, `tools`)
+- Comment referencer des fichiers d'instructions et d'autres fichiers projet
+- Parametrisation : utiliser des variables pour rendre les prompts reutilisables
+- Principes de conception de prompts : contexte d'abord, puis tache, puis contraintes, puis format de sortie
+- Comment tester et iterer sur un prompt avec le framework de qualite
+- Quand utiliser un prompt file vs. un custom agent
+
+### Lab Partie 2 (45 min)
+
+Voir les labs correspondants :
+- [Lab Java](/labs/java)
+- [Lab .NET](/labs/dotnet)
+
+#### Livrable
+
+Deux commandes slash fonctionnelles (`/review-code` et `/generate-tests`) commises dans le repository, testees et affinees sur des classes reelles du projet.

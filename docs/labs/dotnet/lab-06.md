@@ -210,7 +210,7 @@ Answer these in the group discussion:
 │   └── ef-core-migration/SKILL.md            ← Skill: auto-runs dotnet ef on intent
 └── agents/
     ├── clean-architecture-refactor-expert.agent.md ← Agent: refactoring specialist
-    └── dotnet-upgrade-expert.agent.md              ← Agent: .NET migration specialist
+    └── c-sharp-migration-specialist.md             ← Agent: .NET migration specialist
 ```
 
 ---

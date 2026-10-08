@@ -1,6 +1,6 @@
 ---
-title: "Jour 5 — Custom Agents : personas IA specialisees"
-description: "Creer des agents avec une methodologie propre, des gardes-fous et des handoffs entre specialistes"
+title: "Jour 5 — Workflow End-to-End : les 5 primitives ensemble"
+description: "Capstone : implementer une feature complete en utilisant chaque primitive au bon moment"
 author: Accenture
 theme: default
 highlighter: shiki
@@ -9,14 +9,14 @@ transition: slide-left
 
 # GitHub Copilot in Practice
 
-## Jour 5 — Custom Agents : personas IA specialisees
+## Jour 5 — Workflow End-to-End : les 5 primitives ensemble
 
 <br>
 
 
 <!--
-Aujourd'hui on cree des agents specialises — des personas IA avec leur propre facon de penser, de repondre et leurs propres gardes-fous.
-La difference avec les instructions : un agent est actif, il a une identite et la maintient sur toute une session.
+C'est le jour de synthese. Aujourd'hui on ne decouvre plus — on assemble.
+Chaque primitive a sa place dans un workflow reel de livraison de feature.
 -->
 
 ---
@@ -31,14 +31,13 @@ layout: section
 
 <v-clicks>
 
-1. **Rappel** — Les 4 primitives maitrisees, la derniere aujourd'hui
-2. **Qu'est-ce qu'un Custom Agent ?** — La difference avec les instructions et les prompts
-3. **La formule de l'agent** — Les 5 sections obligatoires
-4. **Les agents du projet** — Refactoring Expert et .NET Upgrade Expert
-5. **Les handoffs** — Chaîner des agents specialistes entre eux
-6. **Les gardes-fous** — "Ce que je ne fais jamais" est aussi important que les capacites
-7. **Demo** — Comparer Copilot par defaut vs. agent specialise
-8. **Lab 05** — Vous creez un agent Security Reviewer de zero
+1. **Bilan de la semaine** — Les 5 primitives en un coup d'oeil
+2. **La feature a implementer** — Un user story realiste de bout en bout
+3. **Le workflow en 6 phases** — Chaque phase utilise une primitive differente
+4. **Carte des primitives** — Ce qui s'active quand, et pourquoi
+5. **Lab 05 — Capstone** — Vous implementez la feature complete
+6. **Debrief collectif** — Quelle primitive a eu le plus d'impact ?
+7. **Apres la formation** — Comment etendre votre configuration
 
 </v-clicks>
 
@@ -46,137 +45,87 @@ layout: section
 layout: section
 ---
 
-# Rappel — La derniere primitive
+# Bilan de la semaine
 
 ---
 
-# Les 5 primitives — Ligne d'arrivee
+# Les 5 primitives — Tout est en place
 
-| # | Primitive | Statut |
-|---|-----------|--------|
-| 1 | Always-On Instructions | ✅ Acquis |
-| 2 | File-Based Instructions | ✅ Acquis |
-| 3 | Prompt Files | ✅ Acquis |
-| 4 | Agent Skills | ✅ Acquis |
-| **5** | **Custom Agents** | 🔵 **Aujourd'hui** |
+| # | Primitive | Role | Declenchement |
+|---|-----------|------|--------------|
+| 1 | **Always-On Instructions** | Standards universels du projet | Automatique — chaque session |
+| 2 | **File-Based Instructions** | Regles par couche applicative | Automatique — selon `applyTo` |
+| 3 | **Prompt Files** | Workflows encodes en commandes `/` | Manuel — vous tapez `/commande` |
+| 4 | **Agent Skills** | Workflows proceduraux par intention | Automatique — Copilot choisit |
+| 5 | **Custom Agents** | Personas expertes multi-tours | Manuel — `@nom-de-lagent` |
 
 <br>
 
 <v-click>
 
-> Demain : **Jour 6** — vous assemblez les 5 primitives ensemble sur un workflow complet de bout en bout.
-
-</v-click>
-
----
-layout: section
----
-
-# Primitive 5 — Custom Agents
-
----
-
-# Qu'est-ce qu'un Custom Agent ?
-
-> Un **Custom Agent** est une persona IA specialisee avec sa propre methodologie, son propre format de reponse et ses propres gardes-fous. Il maintient son identite sur **toute la session**.
-
-<br>
-
-<v-clicks>
-
-- Un agent n'est pas une liste de regles — c'est un **expert avec une façon de penser**
-- Il s'active via le selecteur d'agent : `@nom-de-lagent`
-- Chaque question dans la session beneficie du contexte accumule depuis le debut
-- Il peut **refuser** des requetes qui violent ses principes
-
-</v-clicks>
-
----
-
-# Instructions vs. Custom Agents — La difference cle
-
-| Always-On Instructions | Custom Agent |
-|------------------------|-------------|
-| "Utilise les constructeurs primaires" | "Je suis un expert refactoring. Je diagnostique les violations." |
-| Regles de style passives | Persona active avec une methodologie |
-| Toujours en contexte | Active par `@agent-name` |
-| Pas de memoire de conversation | Maintient sa persona sur toute la session |
-| Dit quoi faire | Decide comment approcher le probleme |
-
-<br>
-
-<v-click>
-
-> **Analogie :** Les instructions sont le **reglement interne** de l'equipe. Un agent est un **consultant expert** que vous appelez pour une mission.
+> Aujourd'hui : ces 5 primitives travaillent **ensemble**, chacune au bon moment.
 
 </v-click>
 
 ---
 
-# Ou vivent les agents
+# Un environnement Copilot complet
 
 ```
 .github/
+├── copilot-instructions.md                    ← Primitive 1
+├── instructions/
+│   ├── tests.instructions.md                  ← Primitive 2
+│   ├── handlers.instructions.md               ← Primitive 2
+│   └── migrations.instructions.md             ← Primitive 2
+├── prompts/
+│   ├── review-code.prompt.md                  ← Primitive 3
+│   ├── generate-feature.prompt.md             ← Primitive 3
+│   └── explain-architecture.prompt.md         ← Primitive 3
+├── skills/
+│   ├── run-and-fix-tests/SKILL.md             ← Primitive 4
+│   └── ef-core-migration/SKILL.md             ← Primitive 4
 └── agents/
-    └── {nom}.agent.md        ← n'importe quel .md dans agents/
+    ├── clean-architecture-refactor-expert.agent.md  ← Primitive 5
+    └── c-sharp-migration-specialist.md              ← Primitive 5
 ```
-
-<br>
-
-```yaml
----
-name: clean-architecture-refactor-expert   ← affiché dans le selecteur
-description: "..."                         ← texte d'aide dans le chat
----
-```
-
-<v-clicks>
-
-- Le **nom** doit etre en minuscules avec tirets — c'est ce que vous tapez apres `@`
-- La **description** aide les developpeurs a choisir le bon agent
-- Le **corps** du fichier est le system prompt de l'agent
-
-</v-clicks>
 
 ---
 layout: section
 ---
 
-# La formule de l'agent — 5 sections
+# La feature du jour
 
 ---
 
-# La formule en 5 sections
+# Le user story
 
-Tout agent efficace repond a ces 5 questions :
+> **"En tant que RH, je veux rechercher les employes par departement afin de trouver rapidement tous les membres d'une equipe."**
+
+<br>
 
 <v-clicks>
 
-| Section | Question | Exemple |
-|---------|----------|---------|
-| **Qui je suis** | Persona + background | "Senior .NET architect, 20 ans d'experience" |
-| **Comment je pense** | Methodologie + questions que je pose toujours | "Est-ce que ce handler injecte ApplicationContext ?" |
-| **Comment je reponds** | Structure de sortie + format | "Tableau de violations, puis plan, puis diffs" |
-| **Ce que je fais toujours** | Comportements constants | "Fournir un fix pour chaque violation trouvee" |
-| **Ce que je ne fais jamais** | Gardes-fous | "Ne jamais suggerer de static — toujours DI" |
+**Ce que cela implique techniquement :**
+- Nouvel endpoint : `GET /api/employees/search?department=Engineering`
+- Retourne une liste de `EmployeeResponse`
+- Suit le pattern CQRS existant (`GetEmployeesByDepartmentQuery`)
+- Valide que le departement n'est pas vide
+- Retourne une liste vide si aucun resultat (pas une erreur)
+- Logs avec `[LoggerMessage]` au niveau Information
 
 </v-clicks>
 
 ---
 
-# Pourquoi "Ce que je ne fais jamais" est crucial
+# Pourquoi cette feature ?
 
 <v-clicks>
 
-Sans gardes-fous, un agent derive :
-- L'utilisateur demande quelque chose de contraire aux bonnes pratiques
-- L'agent obtempere — il est "poli" par defaut
-- Le code produit viole l'architecture du projet
-
-Avec gardes-fous :
-- L'agent **refuse** et **explique pourquoi**
-- Le refus est une valeur ajoutee, pas un obstacle
-- L'agent reste coherent meme sous pression
+- Elle touche **toutes les couches** : Controller → Query → Handler → Repository → DTO
+- Elle est **realiste** — pas trop simple, pas trop complexe
+- Elle permet de valider chaque primitive en conditions reelles
+- Elle genere naturellement des tests (cas valide, vide, validation echec)
 
 </v-clicks>
 
@@ -184,8 +133,7 @@ Avec gardes-fous :
 
 <v-click>
 
-> **Exemple :** "Peux-tu deplacer la logique de validation dans une classe utilitaire statique ?"
-> L'agent refuse : "La validation statique casse l'injection de dependances et rend les tests impossibles."
+> C'est exactement le type de feature qu'un developpeur livre plusieurs fois par semaine. L'objectif : livrer avec **zero correction manuelle** des violations de conventions.
 
 </v-click>
 
@@ -193,41 +141,234 @@ Avec gardes-fous :
 layout: section
 ---
 
-# Les agents du projet
+# Le workflow en 6 phases
 
 ---
 
-# Agent 1 — Clean Architecture Refactor Expert
+# Vue d'ensemble du workflow
 
-**Fichier :** `.github/agents/clean-architecture-refactor-expert.agent.md`
+| Phase | Action | Primitive |
+|-------|--------|-----------|
+| 1 | Comprendre l'architecture existante | Always-On + `/explain-architecture` |
+| 2 | Implementer la feature | Always-On + File-Based (actifs en silence) |
+| 3 | Generer les tests | `/generate-feature` + File-Based tests |
+| 4 | Lancer et corriger les tests | Skill `run-and-fix-tests` |
+| 5 | Refactoring | `@clean-architecture-refactor-expert` |
+| 6 | Revue de code finale | `/review-code` |
+
+<br>
+
+<v-click>
+
+> Observez : certaines primitives sont **invoquees explicitement**, d'autres s'activent **en silence**. Les deux sont necessaires.
+
+</v-click>
+
+---
+
+# Phase 1 — Comprendre avant d'agir (10 min)
+
+**Primitive : Always-On Instructions + Prompt `/explain-architecture`**
 
 <v-clicks>
 
-**Persona :** Senior .NET architect, 20+ ans d'experience en Clean Architecture
+**Dans Copilot Chat (mode Ask) :**
+```
+/explain-architecture
+```
+Quand demande le scope, entrer : `the CQRS query layer`
 
-**Specialite :** Violations CQRS, injection de `ApplicationContext`, mapping inline, logging par interpolation, `CancellationToken` manquant
+**Ce que vous apprenez :**
+- Ou ajouter `GetEmployeesByDepartmentQuery` dans Application
+- Ou ajouter le handler et le validator
+- Ce que `IEmployeeRepository` doit exposer
+- Ce que `EmployeeResponse` contient deja
 
-**Comment il repond :**
-1. **Tableau de violations** — Location / Violation / Severite / Regle violee
-2. **Plan de refactoring** — etapes sequentielles, chaque etape laisse le projet compilable
-3. **Diffs avant/apres** — code concret pour chaque correction
-4. **Handoff** — "Lancez `/run-and-fix-tests` pour verifier que rien n'est casse"
+**Ensuite, explorer le pattern existant :**
+```
+Montre-moi comment GetEmployeeByIdQuery est implementé —
+du controller jusqu'au repository. Explique le pattern a suivre.
+```
 
 </v-clicks>
 
 ---
 
-# Agent 1 — Ses gardes-fous
+# Phase 2 — Implementer la feature (20 min)
 
-**Ce que l'expert ne fait jamais :**
+**Primitive : Always-On Instructions + File-Based Instructions (actives en silence)**
+
+```
+Implemente un endpoint GET /api/employees/search?department=Engineering
+qui retourne une liste de EmployeeResponse en suivant le pattern CQRS.
+Valide que department n'est pas vide. Retourne une liste vide si aucun match.
+Logue la requete avec [LoggerMessage] au niveau Information.
+```
 
 <v-clicks>
 
-- N'injecte jamais `ApplicationContext` directement dans un handler
-- Ne suggere jamais de `static` — toujours DI
-- Ne propose jamais de mapper inline — toujours via un profile dedie
-- Ne consolide jamais plusieurs etapes de refactoring en un seul commit
-- Ne commence jamais a modifier sans avoir produit le tableau de violations
+**Copilot cree automatiquement :**
+- `GetEmployeesByDepartmentQuery.cs`
+- `GetEmployeesByDepartmentHandler.cs`
+- `GetEmployeesByDepartmentValidator.cs`
+- Signature de methode dans `IEmployeeRepository`
+
+**Signes que les instructions fonctionnent :**
+- Constructeur primaire (pas de `private readonly` + corps)
+- `EmployeeResponse` retourne (pas l'entite)
+- `[LoggerMessage]` (pas d'interpolation)
+- `BaseResponse` pour l'erreur de validation
+
+</v-clicks>
+
+---
+
+# Phase 3 — Generer les tests (10 min)
+
+**Primitive : Prompt `/generate-feature` + File-Based Instructions tests**
+
+```
+/generate-feature
+```
+
+Variables : `entityName = Employee` · `featureType = Query` · `operation = GetByDepartment`
+
+<v-clicks>
+
+**Tests attendus :**
+- `GetEmployeesByDepartment_ValidDepartment_ReturnsMatchingEmployees`
+- `GetEmployeesByDepartment_EmptyDepartment_ReturnsFailureResponse`
+- `GetEmployeesByDepartment_NoMatch_ReturnsEmptyList`
+
+**Signes que `tests.instructions.md` a fonctionne :**
+- Methodes nommees en `MethodName_StateUnderTest_ExpectedBehaviour`
+- `[Fact]` xUnit, pas `[Test]`
+- Assertions FluentAssertions (`.Should().Be()`)
+- `IEmployeeRepository` mocke — pas de vraie base de donnees
+
+</v-clicks>
+
+---
+
+# Phase 4 — Lancer et corriger les tests (10 min)
+
+**Primitive : Skill `run-and-fix-tests` (auto-charge sur intention)**
+
+```
+run the tests and fix any failures
+```
+
+<v-clicks>
+
+**Ce que Copilot fait automatiquement :**
+1. Detecte l'intention → charge le skill `run-and-fix-tests`
+2. Lance `dotnet test tests/LeaveManagement.Application.UnitTests`
+3. Parse la sortie — identifie les echecs
+4. Diagnostique la cause racine via la table d'erreurs
+5. Propose les corrections ciblees
+
+**Objectif :** Tous les tests passent avant de passer a la phase 5.
+
+</v-clicks>
+
+---
+
+# Phase 5 — Refactoring (10 min)
+
+**Primitive : Custom Agent `@clean-architecture-refactor-expert`**
+
+Basculer vers l'agent, ouvrir `GetEmployeesByDepartmentHandler.cs` :
+
+```
+Review le handler que je viens d'ajouter et refactorise-le si necessaire.
+```
+
+<v-clicks>
+
+**L'agent produit :**
+1. **Tableau de violations** — verifie : `ApplicationContext`, mapping inline, interpolation logging, `CancellationToken` manquant
+2. **Diffs avant/apres** pour chaque probleme trouve
+3. **Handoff** : "Lancez `/run-and-fix-tests` pour verifier que le refactoring n'a rien casse"
+
+**Suivre le handoff** — relancer les tests pour confirmer.
+
+</v-clicks>
+
+---
+
+# Phase 6 — Revue de code finale (10 min)
+
+**Primitive : Prompt `/review-code`**
+
+Ouvrir `EmployeesController.cs`, focus sur le nouvel endpoint `search` :
+
+```
+/review-code
+```
+
+<v-clicks>
+
+**Ce que `/review-code` verifie :**
+- `[CRITICAL]` Controller appelle seulement `_mediator.Send()` — pas de logique metier
+- `[MAJOR]` Parametre `department` valide dans le handler, pas dans le controller
+- `[MAJOR]` Pas de `_logger.LogInformation($"...")` avec des donnees employee (PII)
+- `[MINOR]` `BaseResponse` retourne de facon coherente sur tous les endpoints
+
+**Si des problemes sont trouves :** corriger et relancer `/review-code` jusqu'a zero Major/Critical.
+
+</v-clicks>
+
+---
+layout: section
+---
+
+# Carte complete des primitives
+
+---
+
+# Ce qui s'est active — et quand
+
+```
+Phase 1 — /explain-architecture invoque
+    └── Prompt File (invocation explicite)
+    └── Always-On Instructions (contexte architectural toujours present)
+
+Phase 2 — Implementation
+    └── Always-On Instructions (silent — conventions enforced)
+    └── handlers.instructions.md (silent — fichier Handler.cs ouvert)
+
+Phase 3 — /generate-feature invoque
+    └── Prompt File (invocation explicite)
+    └── tests.instructions.md (silent — fichier *Tests.cs genere)
+
+Phase 4 — "run the tests and fix failures"
+    └── Skill run-and-fix-tests (auto-detecte sur intention)
+
+Phase 5 — @clean-architecture-refactor-expert
+    └── Custom Agent (invocation explicite par persona)
+    └── Handoff → Skill run-and-fix-tests
+
+Phase 6 — /review-code invoque
+    └── Prompt File (invocation explicite)
+```
+
+---
+
+# L'observation cle
+
+<v-clicks>
+
+**Primitives passives** (Jour 2) — actives en silence, zero effort :
+- `copilot-instructions.md` — present sur chaque requete
+- `handlers.instructions.md` — charge quand un handler est ouvert
+- `tests.instructions.md` — charge quand un test est genere
+
+**Primitives actives** (Jours 2-4) — invoquees au bon moment :
+- `/explain-architecture` → comprendre avant d'agir
+- `/generate-feature` → scaffolding fiable et complet
+- `run-and-fix-tests` → validation automatique (sans `/`)
+- `@clean-architecture-refactor-expert` → expertise focusee
+- `/review-code` → porte de qualite finale
 
 </v-clicks>
 
@@ -235,93 +376,7 @@ layout: section
 
 <v-click>
 
-> Testez ses gardes-fous : demandez-lui de "deplacer la validation dans un utilitaire statique". Il doit refuser et expliquer pourquoi DI est la bonne approche.
-
-</v-click>
-
----
-
-# Agent 2 — .NET Upgrade Expert
-
-**Fichier :** `.github/agents/dotnet-upgrade-expert.agent.md`
-
-<v-clicks>
-
-**Persona :** Principal .NET engineer specialise dans les migrations de version
-
-**Specialite :** .NET 6/7/8 → .NET 10, `Startup.cs` → Minimal API, `SpecFlow` → Reqnroll, Swashbuckle → Scalar
-
-**Comment il repond :**
-1. **Audit de l'etat actuel** — versions des packages vs. versions cibles
-2. **Plan de migration** — etapes ordonnees, une seule chose a la fois
-3. **Checklist de verification** — `dotnet build` + `dotnet test` apres chaque etape
-
-**Sa garde-fous cle :** Ne jamais upgrader tous les packages en un seul commit
-
-</v-clicks>
-
----
-layout: section
----
-
-# Les handoffs — Chaîner les agents
-
----
-
-# Pourquoi les handoffs ?
-
-<v-clicks>
-
-Chaque agent est un **specialiste focuse**. Un seul agent ne peut pas tout faire efficacement :
-
-- L'expert refactoring sait ce qui est mauvais — mais ce n'est pas lui qui lance les tests
-- L'expert upgrade sait planifier — mais c'est le skill `run-and-fix-tests` qui valide
-
-</v-clicks>
-
-<br>
-
-<v-clicks>
-
-**Principle :** Chaque agent termine sa partie et **passe le relais** :
-
-```
-Clean Architecture Expert
-  → "Refactoring termine. Lancez /run-and-fix-tests pour valider."
-
-.NET Upgrade Expert
-  → "Migration appliquee. Lancez dotnet build, puis dotnet test."
-```
-
-</v-clicks>
-
----
-
-# Workflow avec handoffs
-
-```
-@clean-architecture-refactor-expert
-   "Review ce handler et refactorise-le"
-          │
-          ▼
-   Tableau violations + Plan + Diffs
-          │
-          ▼
-   Handoff : "Run /run-and-fix-tests"
-          │
-          ▼
-   Skill run-and-fix-tests (auto-charge)
-          │
-          ▼
-   Tests passes ✅
-          │
-          ▼
-   /review-code  ← derniere validation
-```
-
-<v-click>
-
-> Chaque outil fait **une seule chose bien** — les handoffs maintiennent le contexte sans surcharger un seul agent.
+> **Aucune primitive ne fait tout seule.** C'est leur **combinaison** qui produit un workflow fiable.
 
 </v-click>
 
@@ -329,57 +384,41 @@ Clean Architecture Expert
 layout: section
 ---
 
-# Demo — Copilot par defaut vs. Agent specialise
+# Debrief collectif
 
 ---
 
-# Demo — La meme question, deux agents differents
+# Les questions du debrief
 
-**Fichier ouvert :** `CreateEmployeeHandler.cs`
-
-**Question :** `"Review this file and suggest improvements."`
+Repondez ensemble :
 
 <v-clicks>
 
-**Copilot par defaut (Ask mode) :**
-- Repond en prose libre
-- Suggestions generiques sans severite
-- Pas de structure reproductible
-- Peut suggerer n'importe quel pattern
-
-**Clean Architecture Refactor Expert :**
-- Commence par le tableau de violations (Location / Violation / Severite / Regle)
-- Plan numerote — chaque etape laisse le projet compilable
-- Diffs avant/apres pour chaque correction
-- Refuse les suggestions contraires aux principes SOLID
+1. **Ou avez-vous tape le moins de mots pour le plus de resultat ?** Pourquoi ?
+2. **Quelle primitive a economise le plus de temps** par rapport a ne pas l'avoir ?
+3. **Quelle regle de `copilot-instructions.md` a ete enforced automatiquement** sans que vous le demandiez ?
+4. **Que se serait-il passe** si `tests.instructions.md` n'avait pas existe ?
+5. **Quelle regle ajouteriez-vous** aux instructions apres ce que vous avez observe aujourd'hui ?
 
 </v-clicks>
 
 ---
 
-# Demo — Tester un garde-fou
+# Metriques — Ce qui change avec 5 primitives
 
-Toujours dans la session `@clean-architecture-refactor-expert` :
-
-```
-Peux-tu deplacer la logique de validation
-hors du handler dans une classe utilitaire statique ?
-```
-
-<v-click>
-
-**Resultat attendu :** L'agent refuse et explique :
-- Les classes statiques cassent l'injection de dependances
-- Les tests unitaires deviennent impossibles sans DI
-- La bonne approche : injecter le validator via le constructeur primaire
-
-</v-click>
+| Metrique | Sans config | Avec 5 primitives |
+|----------|-------------|-------------------|
+| Suggestions acceptees sans modification | ~30% | ~85% |
+| Violations d'architecture detectees avant PR | Rares | Systematiques |
+| Temps de correction post-suggestion | Eleve | Minimal |
+| Coherence entre developpeurs | Variable | Uniforme |
+| Onboarding d'un nouveau dev | Semaines | Jours |
 
 <br>
 
 <v-click>
 
-> **Observation cle :** Le garde-fou tient meme quand l'utilisateur insiste. C'est la coherence d'un agent bien defini.
+> La configuration Copilot n'est pas un luxe — c'est un **multiplicateur de productivite** pour toute l'equipe.
 
 </v-click>
 
@@ -387,89 +426,87 @@ hors du handler dans une classe utilitaire statique ?
 layout: section
 ---
 
-# Construire un bon agent
+# Apres la formation
 
 ---
 
-# Les erreurs courantes
+# Comment etendre votre configuration
 
 <v-clicks>
 
-**Agent trop vague :**
-```markdown
-# Qui je suis
-Je suis un expert en securite.
-```
-→ Copilot produit des reponses generiques, sans structure.
+**Semaine 1 apres la formation :**
+- Committer `.github/copilot-instructions.md` dans votre vrai projet
+- Ajouter un premier fichier file-based pour vos tests
+- Tester `/review-code` sur un vrai PR
 
-**Agent trop restrictif :**
-→ L'agent refuse tout ce qui n'est pas dans son perimetre exact — inutilisable en pratique.
+**Semaine 2-3 :**
+- Creer `/generate-feature` adapte a votre stack
+- Configurer le skill `run-and-fix-tests` pour votre runner de tests
+- Identifier les cas ou un Custom Agent apporterait de la valeur
 
-**Pas de format de sortie defini :**
-→ Chaque reponse a une structure differente → impossible a parcourir rapidement.
-
-**Pas de gardes-fous :**
-→ L'agent derive des la premiere requete ambigue.
+**Sur le long terme :**
+- Revue trimestrielle des instructions
+- Ajouter une regle a chaque fois que Copilot repete la meme erreur
+- Partager vos prompts entre equipes (inner-source des configurations)
 
 </v-clicks>
 
 ---
 
-# Agents vs. Prompts — Le guide de decision
+# Le principe fondateur
 
-| Utilisez un **Prompt** quand | Utilisez un **Agent** quand |
-|-----------------------------|----------------------------|
-| Tache ponctuelle et precise (scaffolding) | Toute la conversation a besoin d'une persona |
-| Variables fill-in-the-blank | La persona est fixee au debut de la session |
-| Execution courte (une reponse) | Engagement long et multi-tours |
-| La tache est identique a chaque fois | L'expert doit poser des questions et iterer |
+<br>
 
----
-layout: section
----
-
-# Recapitulatif
-
----
-
-# Ce que vous savez maintenant
-
-<v-clicks>
-
-- Un **Custom Agent** est une persona active avec methodologie, format et gardes-fous
-- La **formule en 5 sections** : Qui / Comment je pense / Comment je reponds / Toujours / Jamais
-- Les **gardes-fous** sont aussi importants que les capacites — ils empeche la derive
-- Les **handoffs** permettent de chaîner des specialistes sans surcharger un seul agent
-- `@clean-architecture-refactor-expert` → tableau violations + plan + diffs
-- `@dotnet-upgrade-expert` → audit + plan incremental + checklist de verification
-
-</v-clicks>
-
----
-
-# Demain — Jour 6
-
-## Workflow End-to-End : les 5 primitives ensemble
-
-<v-clicks>
-
-- Implementer une feature complete de bout en bout
-- Utiliser chaque primitive au bon moment dans le workflow
-- Voir comment les primitives se **complementent** — aucune ne fait tout seule
-- Debriefing collectif : quelle primitive a eu le plus d'impact ?
-
-</v-clicks>
+> Copilot est un **nouveau membre talentueux de l'equipe**.
+> Il ecrit du bon code mais ne connait **rien** de votre codebase,
+> vos conventions, ou votre architecture.
+>
+> **La configuration, c'est son onboarding.**
+> Plus cet onboarding est complet, plus il est efficace.
 
 <br>
 
 <v-click>
 
-**Le Jour 6 est le test final de tout ce que vous avez construit cette semaine.**
+Vous avez maintenant les outils pour faire cet onboarding **une fois** et en beneficier **indefiniment**.
 
 </v-click>
+
+---
+layout: section
+---
+
+# Recapitulatif de la semaine
+
+---
+
+# Les 5 jours en un tableau
+
+| Jour | Sujet | Ce que vous avez construit |
+|------|-------|---------------------------|
+| 1 | Fondamentaux | Modele mental, contexte, tokens, modes |
+| 2 | Instructions + Prompts | `copilot-instructions.md` + fichiers file-based + prompt files |
+| 3 | Skills | `run-and-fix-tests`, `ef-core-migration`, `setup-local-dev` |
+| 4 | Custom Agents | Refactoring Expert, Upgrade Expert, Security Reviewer |
+| **5** | **End-to-End** | **Feature complete avec les 5 primitives** |
+
+---
+
+# Ce que vous emportez
+
+<v-clicks>
+
+- La **metaphore fondatrice** : Copilot = nouveau dev talentueux a onboarder
+- Les **tokens et le contexte** : pourquoi la concision des instructions compte
+- **5 primitives** qui se complementent — passives + actives
+- Un **workflow reproductible** : comprendre → implementer → tester → refactorer → reviewer
+- Un **framework d'evaluation** pour mesurer la qualite des suggestions
+- Un **environnement `.github/` complet** pret a etre adapte a votre projet
+
+</v-clicks>
 
 ---
 layout: center
 ---
 
-# Questions ?
+# Merci

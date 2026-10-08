@@ -1,34 +1,32 @@
 ---
-title: "Module 3 — Prompt Files : commandes slash reutilisables"
+title: "Module 3 — Agent Skills : automatisation multi-etapes avec scripts"
 sidebar_position: 3
 ---
 
-# Module 3 — Prompt Files : commandes slash reutilisables
+# Module 3 — Agent Skills : automatisation multi-etapes avec scripts
 
 **Duree : 1h 30m** | **Jour 3**
 
 ## Objectif
 
-Transformer les taches recurrentes en commandes slash reutilisables que tout membre de l'equipe peut invoquer.
+Packager des workflows automatises multi-etapes en skills que Copilot peut declencher et executer sans prompting manuel a chaque etape.
 
-## Theorie (45 min)
+## Theorie (30 min)
 
-Un prompt file est un fichier Markdown qui encode une tache — son contexte, instructions, contraintes et format de sortie attendu — en tant que commande slash reutilisable.
+Un agent skill n'est pas un prompt. C'est un dossier contenant un fichier de description `SKILL.md`, des scripts et des ressources de support. Quand une tache correspond a la description du skill, Copilot active le skill, execute ses scripts et utilise la sortie structuree pour piloter l'action suivante.
 
-### Distinction cle
-
-Un prompt file gere une tache specifique, invoquee par un humain. Ce n'est pas un agent. Il n'a pas d'etat persistant. Il n'execute pas de scripts. Quand une tache necessite plusieurs etapes, des scripts et une execution autonome, c'est un skill (Module 4) ou un custom agent (Module 5).
+Les skills sont un standard ouvert ([agentskills.io](https://agentskills.io)) qui fonctionne sur VS Code, le GitHub Copilot CLI et le GitHub Copilot coding agent.
 
 ### Sujets couverts
 
-- Structure des fichiers `.prompt.md` et frontmatter (`mode`, `description`, `tools`)
-- Comment referencer des fichiers d'instructions et d'autres fichiers projet
-- Parametrisation : utiliser des variables pour rendre les prompts reutilisables
-- Principes de conception de prompts : contexte d'abord, puis tache, puis contraintes, puis format de sortie
-- Comment tester et iterer sur un prompt avec le framework de qualite
-- Quand utiliser un prompt file vs. un custom agent
+- Structure de dossier d'un skill : `SKILL.md`, `scripts/`, `references/`, `assets/`
+- Ecriture d'une description `SKILL.md` qui se declenche de maniere fiable
+- Principes de conception de scripts : produire une sortie structuree (JSON ou texte)
+- Comment l'agent lit la sortie du script et genere l'action suivante
+- Reutilisabilite cross-tool : le meme skill dans VS Code, CLI et coding agent
+- Extensions optionnelles : appels HTTP, lecture/ecriture de fichiers externes
 
-## Lab (45 min)
+## Lab (1 heure)
 
 Voir les labs correspondants :
 - [Lab Java](/labs/java)
@@ -36,4 +34,4 @@ Voir les labs correspondants :
 
 ### Livrable
 
-Deux commandes slash fonctionnelles (`/review-code` et `/generate-tests`) commises dans le repository, testees et affinees sur des classes reelles du projet.
+Un skill test-runner fonctionnel qui s'active automatiquement et produit des suggestions de correction exploitables a partir de vrais echecs de tests.

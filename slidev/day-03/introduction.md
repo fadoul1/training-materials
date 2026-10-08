@@ -1,6 +1,6 @@
 ---
-title: "Jour 3 — Prompt Files : commandes slash reutilisables"
-description: "Encoder vos workflows d'equipe en commandes slash reproductibles et parametrables"
+title: "Jour 3 — Agent Skills : automatisation par intention"
+description: "Packager des workflows multi-etapes qui se declenchent automatiquement selon l'intention de l'utilisateur"
 author: Accenture
 theme: default
 highlighter: shiki
@@ -9,14 +9,14 @@ transition: slide-left
 
 # GitHub Copilot in Practice
 
-## Jour 3 — Prompt Files : commandes slash reutilisables
+## Jour 3 — Agent Skills : automatisation par intention
 
 <br>
 
 
 <!--
-Aujourd'hui on passe de la configuration passive aux outils actifs.
-Les prompt files vous permettent d'encoder les workflows de votre equipe une seule fois et de les reutiliser a l'infini.
+Aujourd'hui on explore la primitive la plus "magique" de Copilot.
+Les Skills se declenchent sans que vous tapiez de commande — Copilot reconnait votre intention et charge le bon workflow tout seul.
 -->
 
 ---
@@ -31,14 +31,14 @@ layout: section
 
 <v-clicks>
 
-1. **Rappel** — Ou en sommes-nous dans les 5 primitives
-2. **Qu'est-ce qu'un Prompt File ?** — La difference avec les instructions
-3. **Anatomie d'un prompt** — Frontmatter, modes, variables
-4. **Les prompts du projet** — `/review-code`, `/generate-feature`, `/explain-architecture`
-5. **Variables `${input:x}`** — Rendre les prompts parametrables
-6. **Ask vs. Agent** — Choisir le bon mode d'execution
-7. **Demo** — Voir `/review-code` et `/generate-feature` en action
-8. **Lab 03** — Vous creez votre propre prompt `/add-integration-scenario`
+1. **Rappel** — Les 4 primitives vues jusqu'ici
+2. **Qu'est-ce qu'un Skill ?** — La difference avec les prompts
+3. **Le mecanisme de decouverte** — Comment Copilot choisit un skill
+4. **L'art de la description** — La cle qui fait tout
+5. **Les skills du projet** — `run-and-fix-tests` et `ef-core-migration`
+6. **Anatomie d'un `SKILL.md`** — Structure et contenu
+7. **Demo** — Skills en action, sans taper `/`
+8. **Lab 03** — Vous creez `setup-local-dev` de zero
 
 </v-clicks>
 
@@ -46,23 +46,29 @@ layout: section
 layout: section
 ---
 
-# Rappel — Ou en sommes-nous ?
+# Rappel — La progression
 
 ---
 
-# Les 5 primitives — Progression
+# Les 5 primitives — Bilan a mi-parcours
 
 | # | Primitive | Statut |
 |---|-----------|--------|
 | 1 | Always-On Instructions | ✅ Acquis |
 | 2 | File-Based Instructions | ✅ Acquis |
+| 3 | Prompt Files | ✅ Acquis |
+| **4** | **Agent Skills** | 🔵 **Aujourd'hui** |
+| 5 | Custom Agents | ⏳ Demain |
 
 <br>
 
 <v-click>
 
-> Jusqu'ici : des primitives **passives** (toujours actives, invisibles).
-> A partir d'aujourd'hui : des primitives **actives** (invoquees explicitement).
+> Rappel de la hierarchie :
+> - Instructions = **regles passives** (toujours actives)
+> - Prompts = **taches explicites** (vous tapez `/`)
+> - Skills = **workflows automatiques** (Copilot decide)
+> - Agents = **personas specialisees** (Jour 4)
 
 </v-click>
 
@@ -70,105 +76,205 @@ layout: section
 layout: section
 ---
 
-# Primitive 3 — Prompt Files
+# Primitive 4 — Agent Skills
 
 ---
 
-# Qu'est-ce qu'un Prompt File ?
+# Qu'est-ce qu'un Skill ?
 
-> Un **Prompt File** est un template de tache reutilisable, invoque avec une commande `/`. C'est une macro pour les workflows que vous executez regulierement.
+> Un **Skill** est un package de connaissance procedurale que Copilot charge automatiquement quand votre message **correspond semantiquement** a sa description. Vous ne tapez pas `/` — Copilot decide de l'utiliser.
 
 <br>
 
 <v-clicks>
 
-**Sans Prompt File :**
-- Vous retapez le meme prompt de revue de code chaque semaine
-- Chaque developpeur le formule differemment → resultats inconsistants
-- Le contexte, les contraintes et le format de sortie sont perdus a chaque fois
+**Comparaison avec les Prompts :**
 
-**Avec Prompt File :**
-- `/review-code` — meme revue, meme structure, chaque fois
-- `/generate-feature` — scaffolding complet en une commande
-- Toute l'equipe utilise les memes workflows → coherence garantie
+| Prompt File | Skill |
+|-------------|-------|
+| Invoque avec `/commande` | S'active par intention |
+| Vous choisissez l'outil | Copilot choisit l'outil |
+| Idéal pour les taches explicites | Idéal pour les workflows recurrents |
+| `generate-feature.prompt.md` | `SKILL.md` dans un dossier dedié |
 
 </v-clicks>
 
 ---
 
-# Instructions vs. Prompts — La difference fondamentale
+# Le mecanisme de decouverte
 
-| | Instructions | Prompts |
-|---|-------------|---------|
-| **Declenchement** | Automatique (toujours) | Explicite (`/commande`) |
-| **Role** | Definir un **comportement** | Definir une **tache** |
-| **Exemple** | "Toujours utiliser les constructeurs primaires" | "Maintenant, fais CETTE revue de code" |
-| **Frequence** | Chaque session | A la demande |
-| **Parametre** | Non | Oui (`${input:variable}`) |
+```
+Chaque session Copilot charge :
+  ┌─────────────────────────────────┐
+  │  Catalogue des skills           │
+  │  (noms + descriptions)          │
+  └─────────────────────────────────┘
+           │
+           ▼
+  Vous tapez : "lance les tests et dis-moi ce qui echoue"
+           │
+           ▼
+  Copilot compare votre message aux descriptions
+           │
+           ▼
+  Correspondance trouvee : "run-and-fix-tests"
+           │
+           ▼
+  Charge le SKILL.md complet dans le contexte
+           │
+           ▼
+  Execute : dotnet test → parse → rapport + corrections
+```
+
+---
+
+# L'art de la description — La cle de tout
+
+La **description** du skill est le seul element que Copilot lit pour decider de le charger.
+
+<v-clicks>
+
+| Mauvaise description | Bonne description |
+|---------------------|-------------------|
+| `"Test runner skill"` | `"Lance dotnet test, analyse les echecs et suggere des corrections ciblees. Utiliser quand l'utilisateur veut lancer les tests, verifier les resultats, investiguer des echecs, ou corriger des tests unitaires."` |
+| `"Migration tool"` | `"Guide l'ajout, la revue, l'application et le rollback de migrations EF Core avec les flags --project et --startup-project corrects. Utiliser quand l'utilisateur parle de migration, schema, dotnet ef, ou changement de base de donnees."` |
+
+</v-clicks>
 
 <br>
 
 <v-click>
 
-> **Regle simple :** Instructions = *comment* Copilot doit se comporter. Prompts = *quoi* Copilot doit faire maintenant.
+> **Regle d'or :** Incluez **ce que fait le skill** ET les **phrases que l'utilisateur dirait naturellement** pour ce besoin.
 
 </v-click>
 
 ---
 
-# Anatomie d'un Prompt File
+# Structure d'un Skill
 
 ```
 .github/
-└── prompts/
-    └── review-code.prompt.md    ← doit finir par .prompt.md
+└── skills/
+    └── run-and-fix-tests/     ← nom du dossier = nom du skill
+        └── SKILL.md           ← fichier obligatoire
 ```
 
 <br>
 
 ```yaml
 ---
-name: review-code          ← apparait dans le menu /
-description: "..."         ← texte d'aide affiché dans le chat
-mode: ask                  ← ask | agent
-model: gpt-4o              ← modele a utiliser (optionnel)
+name: run-and-fix-tests           ← minuscules, tirets uniquement
+description: "..."                ← LE champ le plus important
+argument-hint: "..."              ← indication affichee dans le chat
 ---
 ```
 
 <v-clicks>
 
-- **`name`** — le slug de la commande slash (sans espaces)
-- **`description`** — aide les developpeurs a comprendre quand utiliser ce prompt
-- **`mode`** — definit si Copilot peut modifier des fichiers ou non
-- Le **corps** du fichier est le prompt complet envoye a Copilot
+- Le **dossier** peut contenir d'autres fichiers (templates, scripts, donnees de reference)
+- Le **`SKILL.md`** contient les instructions completes que Copilot suivra
+- Le standard est ouvert : **agentskills.io**
+
+</v-clicks>
+
+---
+layout: section
+---
+
+# Les skills du projet
+
+---
+
+# Skill 1 — `run-and-fix-tests`
+
+**Declencheurs naturels :**
+```
+"lance les tests"
+"pourquoi mes tests sont casses ?"
+"dotnet test echoue, aide-moi a debugger"
+"run the tests and fix any failures"
+```
+
+<v-clicks>
+
+**Ce que le skill fait (en ordre) :**
+
+1. Lance `dotnet test tests/LeaveManagement.Application.UnitTests --verbosity normal`
+2. Parse la sortie — detecte les tests en echec
+3. Consulte la **table de diagnostic** (pattern d'erreur → cause probable)
+4. Propose des corrections ciblees fichier par fichier
+5. Demande de relancer les tests apres correction
 
 </v-clicks>
 
 ---
 
-# Les deux modes d'execution
+# Skill 1 — La table de diagnostic
 
-| Mode | Ce qu'il fait | Quand l'utiliser |
-|------|--------------|-----------------|
-| **`ask`** | Lecture seule, conversationnel | Revue, explication, brainstorming |
-| **`agent`** | Cree et modifie des fichiers, execute des commandes | Scaffolding, generation de code, corrections |
-
-<br>
-
-<v-clicks>
-
-**Exemples :**
-- `/review-code` → `mode: ask` — Copilot lit et commente, ne touche pas aux fichiers
-- `/generate-feature` → `mode: agent` — Copilot cree les fichiers, le handler, les tests
-- `/explain-architecture` → `mode: ask` — Copilot explique, produit un diagramme Mermaid
-
-</v-clicks>
+| Pattern d'erreur | Cause probable | Action |
+|-----------------|----------------|--------|
+| `NullReferenceException` dans un handler | Repository mock non configure | Ajouter `.Setup()` pour la methode manquante |
+| `AutoMapper: Missing map` | Mapping non enregistre | Ajouter le profile dans `MappingProfile.cs` |
+| `CS0246: type not found` | Using manquant ou namespace incorrect | Verifier les imports |
+| `FluentValidation: Must not be empty` | Commande de test sans champ requis | Initialiser tous les champs obligatoires dans Arrange |
 
 <br>
 
 <v-click>
 
-> **Regle de securite :** Utilisez `ask` par defaut. Ne passez a `agent` que si le prompt doit creer ou modifier des fichiers.
+> La table de diagnostic est ce qui distingue un Skill d'un prompt generique — elle encode la **connaissance du projet**.
+
+</v-click>
+
+---
+
+# Skill 2 — `ef-core-migration`
+
+**Declencheurs naturels :**
+```
+"ajoute une migration pour la nouvelle entite Department"
+"le schema a change, mets a jour la base"
+"comment appliquer la migration ?"
+"dotnet ef migrations add ..."
+```
+
+<v-clicks>
+
+**Ce que le skill fait :**
+
+1. Verifie que `dotnet ef` est installe (`dotnet ef --version`)
+2. Genere la commande avec les **deux flags obligatoires** :
+   ```bash
+   dotnet ef migrations add NomMigration \
+     --project src/LeaveManagement.Infrastructure \
+     --startup-project src/LeaveManagement.API
+   ```
+3. Indique ou verifier le fichier genere avant d'appliquer
+4. Guide l'application : `dotnet ef database update ...`
+5. Explique le rollback si necessaire
+
+</v-clicks>
+
+---
+
+# Skill 2 — Pourquoi les deux flags sont critiques
+
+Sans les flags, `dotnet ef` echoue si plusieurs projets contiennent un `DbContext` :
+
+```bash
+# ❌ Sans flags — erreur ambigue si plusieurs projets
+dotnet ef migrations add AddDepartment
+
+# ✅ Avec flags — toujours fiable
+dotnet ef migrations add AddDepartment \
+  --project src/LeaveManagement.Infrastructure \
+  --startup-project src/LeaveManagement.API
+```
+
+<v-click>
+
+> Ce type de **connaissance specifique au projet** est exactement ce qu'un Skill doit encoder. Un developpeur junior ne connait pas ces flags — le Skill lui evite l'erreur.
 
 </v-click>
 
@@ -176,81 +282,59 @@ model: gpt-4o              ← modele a utiliser (optionnel)
 layout: section
 ---
 
-# Les prompts du projet
+# Demo — Skills en action
 
 ---
 
-# `/review-code` — Revue structuree et reproductible
+# Demo 1 — `run-and-fix-tests` (sans taper `/`)
 
-```yaml
----
-name: review-code
-mode: ask
----
-```
+**Scenario :** Un test echoue apres l'ajout d'une nouvelle feature
 
 <v-clicks>
 
-**Ce que le prompt fait :**
-- Verifie la conformite aux regles de `copilot-instructions.md`
-- Classe les problemes par severite : **Critical** / **Major** / **Minor** / **Info**
-- Couvre : Clean Architecture, idiomes du langage, patterns CQRS, logging, securite, tests
-- Produit un **Resume** avec le probleme le plus important en tete
+**Etape 1 :** Dans Copilot Chat (Agent mode), taper :
+```
+run the tests and tell me if anything is failing
+```
 
-**Pourquoi c'est mieux qu'un prompt ad-hoc :**
-- La meme revue chaque fois — pas d'oubli de categorie
-- Le format est previsible → facile a parcourir pour le reviewer humain
-- Encode le savoir collectif de l'equipe dans la revue
+**Etape 2 :** Observer que Copilot :
+- Reconnait l'intention (sans `/`)
+- Lance `dotnet test` dans le terminal
+- Parse la sortie et identifie les echecs
+
+**Etape 3 :** Tester une autre formulation :
+```
+pourquoi mes tests sont casses ?
+```
+
+**Meme skill, meme resultat** — la correspondance est **semantique**, pas par mot-cle.
 
 </v-clicks>
 
 ---
 
-# `/generate-feature` — Scaffolding complet en une commande
+# Demo 2 — `ef-core-migration`
 
-```yaml
----
-name: generate-feature
-mode: agent
----
-```
+**Scenario :** Ajouter une entite `Department` avec sa table en base
 
 <v-clicks>
 
-**Variables parametrables :**
-- `${input:entityName}` — ex: `Employee`, `Department`
-- `${input:featureType}` — `Command` ou `Query`
-- `${input:operation}` — ex: `Create`, `GetById`, `GetByDepartment`
-
-**Ce que Copilot genere automatiquement :**
-- Dossier `Features/{Entity}/{Type}/{Operation}/`
-- `{Operation}Command.cs` / `{Operation}Handler.cs` / `{Operation}Validator.cs`
-- Stub de mapper + classe de test avec deux `[Fact]` prepares
-
-</v-clicks>
-
----
-
-# `/explain-architecture` — Documentation generee a la demande
-
-```yaml
----
-name: explain-architecture
-mode: ask
----
+**Etape 1 :** Taper dans Copilot Chat :
+```
+Verifie si dotnet ef est installe et ajoute une migration AddDepartmentEntity
 ```
 
-<v-clicks>
+**Observer :**
+- Copilot charge le skill `ef-core-migration`
+- Verifie la presence de l'outil
+- Genere la commande **avec les deux flags** — jamais sans
 
-**Variable :** `${input:scope}` — ex: `CQRS flow`, `EF Core model`, `couche Application`
+**Etape 2 :** Continuer dans la meme session :
+```
+maintenant applique la migration a la base
+```
 
-**Resultat :**
-- Trace le chemin d'une requete HTTP de bout en bout
-- Produit un **diagramme de sequence Mermaid**
-- Reference les **vrais noms de classes** du projet (pas des exemples generiques)
-- Explique pourquoi `BaseResponse` est retourne (pas d'exceptions)
-
-**Cas d'usage :** Onboarding d'un nouveau developpeur, documentation sprint, code review PR
+Copilot enchaîne avec `dotnet ef database update` — **maintien du contexte** entre les tours.
 
 </v-clicks>
 
@@ -258,134 +342,49 @@ mode: ask
 layout: section
 ---
 
-# Variables `${input:x}` — Prompts parametrables
+# Ecrire un bon `SKILL.md`
 
 ---
 
-# Rendre un prompt reutilisable
-
-Sans variable, le prompt est lie a une entite specifique :
+# Structure recommandee d'un SKILL.md
 
 ```markdown
-Genere les fichiers CQRS pour l'entite Employee...
+---
+name: mon-skill
+description: "Ce que le skill fait + quand l'utiliser (phrases naturelles)"
+argument-hint: "Etape optionnelle a sauter directement (ex: 'connection string')"
+---
+
+## Prerequis
+Ce qui doit etre en place avant d'executer
+
+## Etape 1 — [Nom]
+Instructions detaillees + commande exacte
+
+## Etape 2 — [Nom]
+...
+
+## Table d'erreurs courantes
+| Erreur | Cause | Correction |
+
+## Apres execution
+Ce que l'utilisateur doit verifier
 ```
-
-<br>
-
-Avec `${input:variable}`, un seul prompt couvre tous les cas :
-
-```markdown
-Genere les fichiers CQRS pour l'entite **${input:entityName}**
-Type d'operation : **${input:featureType}** — **${input:operation}**
-```
-
-<v-click>
-
-Quand vous tapez `/generate-feature`, Copilot vous demande :
-```
-entityName: Department
-featureType: Command
-operation: Create
-```
-
-Et genere exactement le bon scaffolding.
-
-</v-click>
 
 ---
 
-# Bonnes pratiques pour les variables
+# Les trois ingredients d'un Skill utile
 
 <v-clicks>
 
-- **Noms explicites** — `${input:entityName}` > `${input:x}`
-- **Une variable par information** — ne pas surcharger une seule variable
-- **Documenter les valeurs attendues** dans le corps du prompt :
+**1. Une description qui fait correspondance**
+→ Inclure les phrases exactes que l'equipe dirait pour ce besoin
 
-```markdown
-## Parametres
-- **entityName** : Nom en PascalCase de l'entite (ex: Employee, Department)
-- **featureType** : `Command` (ecriture) ou `Query` (lecture)
-- **operation** : Verbe en PascalCase (ex: Create, GetById, Delete)
-```
+**2. Des etapes precises et sequentielles**
+→ Chaque etape doit produire un etat stable (le projet compile, les tests passent)
 
-- **Tester avec des valeurs limites** — espaces, caracteres speciaux, noms longs
-
-</v-clicks>
-
----
-layout: section
----
-
-# Demo — Prompt Files en action
-
----
-
-# Demo 1 — `/review-code`
-
-**Scenario :** Revue d'un handler qui viole plusieurs regles du projet
-
-<v-clicks>
-
-**Etape 1 :** Ouvrir `CreateEmployeeHandler.cs`
-
-**Etape 2 :** Taper `/review-code` dans Copilot Chat
-
-**Observer la structure de sortie :**
-- `[CRITICAL]` — violation de securite ou perte de donnees
-- `[MAJOR]` — violation d'architecture (ex: entite retournee directement, pas de DTO)
-- `[MINOR]` — style ou idiome (ex: `var` trop generique, logging par interpolation)
-- `[INFO]` — suggestion d'amelioration
-- **Resume** — le probleme le plus important en une phrase
-
-**Relancer `/review-code`** apres correction → le rapport doit etre plus court
-
-</v-clicks>
-
----
-
-# Demo 2 — `/generate-feature`
-
-**Scenario :** Scaffolding d'une nouvelle entite `Department`
-
-<v-clicks>
-
-**Etape 1 :** Taper `/generate-feature` en mode Agent
-
-**Etape 2 :** Renseigner les variables :
-- `entityName` → `Department`
-- `featureType` → `Command`
-- `operation` → `Create`
-
-**Observer ce que Copilot cree :**
-- Dossier `Features/Departments/Commands/CreateDepartment/`
-- 3 fichiers : Command, Handler, Validator
-- Handler avec constructeur primaire + `[LoggerMessage]` + `BaseResponse`
-- `CancellationToken` passe sur chaque appel async
-
-**Verifier :** `dotnet build` doit passer sans erreur
-
-</v-clicks>
-
----
-layout: section
----
-
-# Concevoir un bon Prompt File
-
----
-
-# Anatomie d'un prompt efficace
-
-Un bon prompt file contient toujours :
-
-<v-clicks>
-
-1. **Contexte** — A qui s'adresse ce prompt, sur quel projet
-2. **Tache precise** — Ce que Copilot doit faire, etape par etape
-3. **Contraintes** — Les regles a respecter (reference aux instructions)
-4. **Format de sortie** — La structure exacte attendue (tableau, liste, code block...)
-5. **Exemples** — Ce qui est correct, ce qui ne l'est pas
+**3. Une table de diagnostic**
+→ Anticiper les erreurs courantes — c'est la valeur ajoutee par rapport a un prompt generique
 
 </v-clicks>
 
@@ -393,59 +392,22 @@ Un bon prompt file contient toujours :
 
 <v-click>
 
-> Plus le prompt est precis, plus le resultat est previsible — et reproductible.
+> Un Skill sans table de diagnostic est un prompt deguise. La table est ce qui encode la **connaissance de l'equipe** et evite les allers-retours.
 
 </v-click>
 
 ---
 
-# Prompt + Instructions = Resultat garanti
+# Skills vs. Prompts vs. Instructions — Le guide definitif
 
-```
-/generate-feature
-     │
-     ▼
-Prompt file          →  "Voici les etapes de scaffolding"
-     +
-copilot-instructions.md  →  "Voici les conventions du projet"
-     +
-handlers.instructions.md →  "Voici les regles du handler"
-     │
-     ▼
-Code conforme aux standards du projet, du premier coup
-```
-
-<v-click>
-
-> Le prompt definit **la tache**. Les instructions definissent **le style**. Les deux ensemble produisent un resultat coherent et reproductible.
-
-</v-click>
-
----
-layout: section
----
-
-# Comparaison : Instructions vs. Prompts vs. Skills
-
----
-
-# Quand utiliser quoi ?
-
-| | Instructions | Prompts | Skills |
-|-|-------------|---------|--------|
-| **Invocation** | Automatique | `/commande` | Automatique (intention) |
-| **Role** | Regles et conventions | Template de tache | Workflow procedurale |
-| **Parametre** | Non | Oui (`${input:x}`) | Non |
-| **Type de fichier** | `.instructions.md` | `.prompt.md` | `SKILL.md` |
-| **Exemple** | "Utiliser FluentAssertions" | "Fais une revue de code maintenant" | "Lance les tests et corrige les echecs" |
-
-<br>
-
-<v-click>
-
-> **Skills** = Jour 4. Retenez pour l'instant : Prompts = invocation explicite par `/`, Skills = invocation implicite par l'intention.
-
-</v-click>
+| Scenario | Outil |
+|----------|-------|
+| "Toujours nommer les tests en `MethodName_State_Result`" | Always-On Instructions |
+| "Regles tests actives seulement sur `*Tests.cs`" | File-Based Instructions |
+| "Je tape `/review-code` pour lancer la revue" | Prompt File |
+| "Je dis 'lance les tests' et Copilot agit seul" | **Skill** |
+| "J'ai besoin d'un expert securite pour toute la session" | Custom Agent (Jour 4) |
+| "Le skill necessite un template ou un script annexe" | **Skill** (avec dossier) |
 
 ---
 layout: section
@@ -459,39 +421,28 @@ layout: section
 
 <v-clicks>
 
-- Un **Prompt File** encode un workflow d'equipe en commande slash reproductible
-- Le frontmatter definit le **nom**, le **mode** (`ask`/`agent`) et le **modele**
-- `${input:variable}` rend un prompt **parametrable** pour plusieurs entites
-- **`ask`** = lecture seule, **`agent`** = cree et modifie des fichiers
-- Prompt + Instructions = resultat **coherent** et **previsible**
-- Trois prompts cles : `/review-code`, `/generate-feature`, `/explain-architecture`
+- Un **Skill** est un package de connaissance procedurale a declenchement automatique
+- Copilot lit les **descriptions** de tous les skills et choisit celui qui correspond a votre message
+- La **description** est le champ le plus important — elle doit inclure les phrases naturelles de l'equipe
+- `run-and-fix-tests` → lance `dotnet test`, parse, diagnostique, corrige
+- `ef-core-migration` → genere les commandes avec les bons flags, guide pas a pas
+- Un Skill peut contenir **plusieurs fichiers** (templates, scripts, donnees de reference)
+- Le standard est ouvert : **agentskills.io**
 
 </v-clicks>
 
 ---
 
-# Decision guide — Quel outil utiliser ?
-
-| Besoin | Outil |
-|--------|-------|
-| Copilot applique toujours ces regles | Always-On Instructions |
-| Regles actives seulement sur certains fichiers | File-Based Instructions |
-| Je veux lancer un workflow precis avec `/` | Prompt File |
-| Copilot doit detecter mon intention et agir seul | Skill (Jour 4) |
-| Je veux un expert IA avec une personnalite | Custom Agent (Jour 5) |
-
----
-
 # Demain — Jour 4
 
-## Agent Skills : workflows automatiques par intention
+## Custom Agents : personas IA specialisees
 
 <v-clicks>
 
-- Comprendre le **mecanisme de decouverte** par correspondance semantique
-- Utiliser `run-and-fix-tests` — sans taper `/`, Copilot detecte l'intention
-- Utiliser `ef-core-migration` — ajout de migration avec les bons flags
-- Ecrire un nouveau `SKILL.md` de zero en suivant le standard **agentskills.io**
+- Creer un agent **Clean Architecture Refactor Expert** avec sa propre methodologie
+- Comprendre la formule : Qui / Comment je pense / Comment je reponds / Ce que je fais toujours / Ce que je ne fais jamais
+- Utiliser les **handoffs** pour chaîner des agents entre eux
+- Creer un agent **Security Reviewer** de zero
 
 </v-clicks>
 
@@ -499,7 +450,7 @@ layout: section
 
 <v-click>
 
-**Labs : vous construisez un skill `setup-local-dev` qui guide l'onboarding.**
+**Labs : vous construisez deux agents specialises et les combinez en workflow.**
 
 </v-click>
 

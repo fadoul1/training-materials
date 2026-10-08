@@ -1,32 +1,35 @@
 ---
-title: "Module 4 — Agent Skills : automatisation multi-etapes avec scripts"
+title: "Module 4 — Custom Agents : personas specialisees avec scope controle"
 sidebar_position: 4
 ---
 
-# Module 4 — Agent Skills : automatisation multi-etapes avec scripts
+# Module 4 — Custom Agents : personas specialisees avec scope controle
 
-**Duree : 1h 30m** | **Jour 4**
+**Duree : 1h 00m** | **Jour 4**
 
 ## Objectif
 
-Packager des workflows automatises multi-etapes en skills que Copilot peut declencher et executer sans prompting manuel a chaque etape.
+Creer des personas IA specialisees avec un scope controle, un acces aux outils limite et la capacite d'orchestrer d'autres agents pour du travail multi-etapes.
 
 ## Theorie (30 min)
 
-Un agent skill n'est pas un prompt. C'est un dossier contenant un fichier de description `SKILL.md`, des scripts et des ressources de support. Quand une tache correspond a la description du skill, Copilot active le skill, execute ses scripts et utilise la sortie structuree pour piloter l'action suivante.
+Un custom agent est une persona IA persistante definie dans un fichier Markdown. Il a son propre system prompt, son propre ensemble d'outils autorises, ses propres preferences de modele et ses propres limites de scope.
 
-Les skills sont un standard ouvert ([agentskills.io](https://agentskills.io)) qui fonctionne sur VS Code, le GitHub Copilot CLI et le GitHub Copilot coding agent.
+### Concepts cles
+
+- **Restrictions d'outils** — vous pouvez lister explicitement quels outils l'agent peut utiliser
+- **Orchestration de sous-agents** — un agent peut deleguer une sous-tache a un autre agent specialise
 
 ### Sujets couverts
 
-- Structure de dossier d'un skill : `SKILL.md`, `scripts/`, `references/`, `assets/`
-- Ecriture d'une description `SKILL.md` qui se declenche de maniere fiable
-- Principes de conception de scripts : produire une sortie structuree (JSON ou texte)
-- Comment l'agent lit la sortie du script et genere l'action suivante
-- Reutilisabilite cross-tool : le meme skill dans VS Code, CLI et coding agent
-- Extensions optionnelles : appels HTTP, lecture/ecriture de fichiers externes
+- Structure Markdown d'un custom agent : frontmatter, system prompt, `tools`, `model`
+- Comment ecrire un system prompt suffisamment specifique sans etre trop restrictif
+- Restrictions explicites d'outils : pourquoi limiter les outils est une fonctionnalite
+- Definition du scope : ce que l'agent doit faire et ce qu'il ne doit pas faire
+- Orchestration de sous-agents : `delegate`, passage de contexte, reprise
+- Archetypes d'agents : refactoring agent, migration agent, security audit agent
 
-## Lab (1 heure)
+## Lab (30 min)
 
 Voir les labs correspondants :
 - [Lab Java](/labs/java)
@@ -34,4 +37,4 @@ Voir les labs correspondants :
 
 ### Livrable
 
-Un skill test-runner fonctionnel qui s'active automatiquement et produit des suggestions de correction exploitables a partir de vrais echecs de tests.
+Un custom agent de refactoring fonctionnel, avec des limites de scope verifiees et au moins une tache completee demontree.

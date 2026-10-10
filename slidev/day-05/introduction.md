@@ -487,7 +487,7 @@ layout: section
 | 1 | Fondamentaux | Modele mental, contexte, tokens, modes |
 | 2 | Instructions + Prompts | `copilot-instructions.md` + fichiers file-based + prompt files |
 | 3 | Skills | `run-and-fix-tests`, `ef-core-migration`, `setup-local-dev` |
-| 4 | Custom Agents | Refactoring Expert, Upgrade Expert, Security Reviewer |
+| 4 | Custom Agents | Refactoring Expert, C# Migration Specialist, Security Reviewer |
 | **5** | **End-to-End** | **Feature complete avec les 5 primitives** |
 
 ---

@@ -2,7 +2,7 @@
 
 **Partie 1 — Custom Instructions**
 - `copilot-instructions.md` : structure et contenu
-- `/init` pour bootstrapper la configuration
+- `/init` pour bootstrapper la configuration (`copilot-instructions.md` ou, selon la version, `AGENT.md`)
 - `*.instructions.md` et patterns `applyTo`
 - Superposition de regles sans conflits
 

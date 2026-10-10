@@ -32,7 +32,7 @@ layout: section
 <v-clicks>
 
 1. **Qu'est-ce que GitHub Copilot ?** — Bien plus qu'un auto-completeur
-2. **Contexte et Tokens** — Les concepts fondamentaux pour comprendre le comportement de Copilot
+2. **Contexte, Tokens et Credits AI** — Les concepts fondamentaux pour comprendre le comportement et le cout de Copilot
 3. **L'interface Copilot dans VS Code** — Tour complet de l'outil graphique
 4. **Les modes d'interaction** — Inline, Chat, Agent, Plan
 5. **Les Chat Participants** — `@workspace`, `@vscode`, `@terminal`
@@ -137,7 +137,7 @@ C'est pourquoi la configuration est si importante.
 layout: section
 ---
 
-# Contexte et Tokens — Les fondamentaux
+# Contexte, Tokens et Credits AI — Les fondamentaux
 
 ---
 
@@ -152,7 +152,7 @@ layout: section
 - Chaque requete est **stateless** — le modele ne "se souvient" de rien entre les sessions
 - Ce qui entre dans la fenetre : fichier actif, onglets ouverts, instructions, historique de conversation
 - Ce qui depasse la limite est **tronque** — Copilot ne le voit tout simplement pas
-- Taille typique : **128k tokens** (GPT-4o) · **200k tokens** (Claude Sonnet)
+- Taille typique : **128k tokens** (GPT-5.6 Luna) · **200k tokens** (Claude Sonnet 5.5)
 
 </v-clicks>
 
@@ -202,7 +202,32 @@ C'est pour ca que "ouvrir les bons onglets" et "avoir des instructions concises"
 
 <v-click>
 
-> **Consequence pratique :** Plus votre contexte (instructions + fichiers) est volumineux, moins il reste de place pour la reponse — et plus vous consommez de quota.
+> **Consequence pratique :** Plus votre contexte (instructions + fichiers) est volumineux, moins il reste de place pour la reponse — et plus vous consommez de credits AI.
+
+</v-click>
+
+---
+
+# Les credits AI — Le cout reel d'une requete
+
+> GitHub Copilot facture les requetes **premium** en **credits AI** : un budget mensuel inclus selon le plan (Business / Enterprise), puis facturable a l'usage une fois epuise.
+
+<br>
+
+<v-clicks>
+
+- Chaque requete consomme un **multiplicateur de credits** qui depend du modele utilise (ex. `0x`, `1x`, jusqu'a `10x` pour les modeles les plus avances)
+- Les **tokens** mesurent la taille d'une requete — les **credits AI** mesurent son **cout** sur votre quota
+- Un modele **Rapide** coute generalement `0x`–`1x` credit ; un modele **Premium** peut couter `10x` ou plus pour la meme question
+- Une conversation longue (beaucoup de tokens en input) avec un modele premium cumule les deux couts : plus de tokens traites, et un multiplicateur plus eleve
+
+</v-clicks>
+
+<br>
+
+<v-click>
+
+> **Consequence pratique :** Choisir le bon modele n'est pas qu'une question de qualite de reponse — c'est aussi une question de **budget**. Reservez les modeles premium aux taches qui en ont vraiment besoin.
 
 </v-click>
 
@@ -227,6 +252,7 @@ C'est pour ca que "ouvrir les bons onglets" et "avoir des instructions concises"
 - `copilot-instructions.md` : visez **1500–2000 tokens** (~1200 mots)
 - Fermez les onglets non pertinents avant une session de generation
 - Utilisez `#file` pour cibler precisement les fichiers dont Copilot a besoin
+- Gardez un modele **Rapide** par defaut, et ne basculez sur un modele **Premium** que pour les taches qui le justifient — vous economisez des credits AI
 
 </v-click>
 
@@ -488,9 +514,9 @@ GitHub Copilot donne acces a **plusieurs modeles** avec des forces differentes :
 
 | Type | Modele | Force | Utilisation |
 |------|--------|-------|-------------|
-| **Rapide** | GPT-4o | Vitesse, completions courtes | Inline, questions simples |
-| **Raisonnement** | o3-mini / Claude Sonnet | Analyse profonde, architecture | Revue de code, refactoring complexe |
-| **Premium** | o1 / Claude Opus | Raisonnement avance | Decisions d'architecture, bugs complexes |
+| **Rapide** | Claude Haiku 4.5 | Vitesse, completions courtes | Inline, questions simples |
+| **Raisonnement** | GPT-5.6 Luna / Claude Sonnet 5.5 | Analyse profonde, architecture | Revue de code, refactoring complexe |
+| **Premium** | Claude Opus 5.5 | Raisonnement avance | Decisions d'architecture, bugs complexes |
 
 <br>
 
@@ -510,7 +536,7 @@ Dans Copilot Chat, cliquez sur le **selecteur de modele** en bas de la fenetre d
 
 - Le modele selectionne s'applique a **la session en cours**
 - Vous pouvez changer de modele **en cours de conversation**
-- Certains modeles consomment plus de **quota** (modeles premium)
+- Certains modeles consomment plus de **credits AI** (modeles premium) — voir la section precedente sur les credits
 
 </v-clicks>
 
@@ -736,6 +762,7 @@ layout: section
 
 - Copilot genere des suggestions basees sur le **contexte disponible** (fenetre de contexte)
 - Les **tokens** sont l'unite de mesure — contexte concis = suggestions de meilleure qualite
+- Les **credits AI** sont l'unite de cout — choisir le bon modele economise votre quota
 - La **personnalisation** est la cle pour des suggestions alignees
 - **4 modes d'interaction** : Inline, Chat (Ask / Agent / Plan)
 - **3 Chat Participants** : `@workspace`, `@vscode`, `@terminal`

@@ -79,7 +79,7 @@ File: [`.github/agents/clean-architecture-refactor-expert.agent.md`](pathname://
 File: [`.github/agents/c-sharp-migration-specialist.md`](pathname:///resources/dotnet/agents/c-sharp-migration-specialist.md)
 
 **Persona:** Principal .NET engineer specialised in version migrations  
-**Specialty:** .NET 6/7/8 → .NET 10, `Startup.cs` → minimal API, `SpecFlow` → Reqnroll, Swashbuckle → Scalar  
+**Specialty:** .NET 6/7/8 → .NET 10, `Startup.cs` → minimal API, `SpecFlow` → Reqnroll, Swashbuckle → Scalar, `.sln` → `.slnx`  
 **Handoffs:** → Build After Upgrade → Run Tests
 
 ---
@@ -129,24 +129,25 @@ Can you move the validation logic out of the handler into a static utility class
 
 ---
 
-## Exercise 3 — Run an Upgrade Assessment with the C# Migration Specialist (15 min)
+## Exercise 3 — Execute the Migration with the C# Migration Specialist (15 min)
 
 Switch to the **C# Migration Specialist** agent.
 
-Ask:
+This project currently targets **.NET 8**. Ask:
 ```
-This project is on .NET 10 already, but I want to understand what would need
-to change if we were upgrading from .NET 8 to .NET 10. Give me the audit and plan.
+This project targets .NET 8. Migrate it to .NET 10.
 ```
 
 **The agent will:**
-1. Produce a **Current State Audit** table with package versions vs. target versions
+1. Produce a **Current State Audit** table with current package versions vs. target .NET 10 versions
 2. Produce an **Upgrade Plan** using the .NET 8→10 migration cheat sheet:
    - `Startup.cs` → `Program.cs` minimal API
    - `SpecFlow` → `Reqnroll`
    - `Swashbuckle` UI → Scalar
    - `<Nullable>enable</Nullable>` flag
-3. Produce a **Verification Checklist** with `dotnet build` and `dotnet test` steps
+   - `.sln` → `.slnx` via `dotnet sln migrate`
+3. **Execute the plan step by step** — editing the `TargetFramework`, updating packages, and applying the code changes one at a time
+4. Run `dotnet build` and `dotnet test` after each step, producing a **Verification Checklist** as it goes
 
 **Key observation:** The agent works **incrementally** — it warns against upgrading all packages in one commit. Ask it: "What would happen if I upgraded everything at once?" and observe the guardrail response.
 

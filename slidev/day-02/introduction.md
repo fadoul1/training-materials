@@ -221,6 +221,14 @@ Au lieu d'ecrire le fichier de zero, utilisez la commande `/init` :
 
 <v-click>
 
+> **Evolution recente :** Selon la version de Copilot, `/init` peut generer un `AGENT.md` a la racine du repo au lieu de (ou en plus de) `copilot-instructions.md` — meme contenu, meme role, nouveau nom de fichier standard. Verifiez quel fichier votre version genere avant de committer.
+
+</v-click>
+
+<br>
+
+<v-click>
+
 > **Workflow recommande :** `/init` → relire → corriger les regles incorrectes → ajouter les regles manquantes → committer avec l'equipe.
 
 </v-click>
@@ -556,7 +564,7 @@ layout: section
 
 - **`copilot-instructions.md`** charge automatiquement a chaque session Chat
 - Il doit contenir : stack, architecture, conventions, anti-patterns avec exemples
-- **`/init`** permet de bootstrapper un premier draft a partir du codebase existant
+- **`/init`** permet de bootstrapper un premier draft a partir du codebase existant — selon la version, cible `copilot-instructions.md` ou le nouveau `AGENT.md`
 - **`*.instructions.md`** + `applyTo` ciblent des couches specifiques
 - Les regles file-based **s'ajoutent** aux always-on — elles ne les remplacent pas
 - La strategie optimale : **1 fichier always-on** + **N fichiers file-based par couche**

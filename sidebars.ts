@@ -2,7 +2,7 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
   trainingSidebar: [
-    { type: 'doc', id: 'intro', label: 'Accueil' },
+    { type: 'doc', id: 'intro', label: 'Présentation du parcours' },
     {
       type: 'category',
       label: 'Modules',

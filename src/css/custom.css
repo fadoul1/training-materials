@@ -1,3 +1,10 @@
+/* Inter: open-source substitute for the unavailable licensed Graphik */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/inter/800.css';
+
 :root {
   /* Accenture brand colors */
   --ifm-color-primary: #A100FF;
@@ -21,7 +28,7 @@
   --track-dotnet: #512BD4;
 
   --ifm-code-font-size: 95%;
-  --ifm-font-family-base: 'Graphik', 'Inter', system-ui, -apple-system, sans-serif;
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --docusaurus-highlighted-code-line-bg: rgba(161, 0, 255, 0.1);
   --ifm-navbar-background-color: #000000;
   --ifm-navbar-link-color: #FFFFFF;
@@ -41,8 +48,6 @@
   --ifm-color-primary-lighter: #D699FF;
   --ifm-color-primary-lightest: #E6CCFF;
   --docusaurus-highlighted-code-line-bg: rgba(185, 77, 255, 0.15);
-  --ifm-navbar-background-color: #000000;
-  --ifm-footer-background-color: #000000;
 }
 
 /* Track badges */
@@ -70,6 +75,13 @@
 }
 
 /* Module cards */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
 .module-card {
   display: flex;
   flex-direction: column;

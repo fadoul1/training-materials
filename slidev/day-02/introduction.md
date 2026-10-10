@@ -41,6 +41,14 @@ layout: section
 6. **Demo avant/apres** — Voir l'impact des deux primitives en direct
 7. **Lab Partie 1** — Vous construisez vos propres fichiers d'instructions
 
+</v-clicks>
+
+---
+
+# Ce que nous allons couvrir (suite)
+
+<v-clicks>
+
 **Partie 2 — Prompt Files**
 
 8. **Primitive 3 : Prompt Files** — Fichiers `.prompt.md`, frontmatter, modes

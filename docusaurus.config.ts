@@ -64,14 +64,16 @@ const config: Config = {
   },
 
   themeConfig: {
+    image: "img/social-card.png",
     navbar: {
+      style: "dark",
       title: "Copilot Training",
       logo: {
-        alt: "Accenture Logo",
+        alt: "Copilot Training Logo",
         src: "img/logo.svg",
       },
       items: [
-        { type: "doc", docId: "intro", label: "Accueil", position: "left" },
+        { to: "/", label: "Accueil", position: "left" },
         { to: "/modules/module-01", label: "Modules", position: "left" },
         { to: "/labs/java", label: "Labs Java", position: "left" },
         { to: "/labs/dotnet", label: "Labs .NET", position: "left" },

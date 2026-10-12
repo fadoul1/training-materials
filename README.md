@@ -14,8 +14,7 @@ training-materials/
 │   ├── day-02/        ← Présentation Jour 2
 │   ├── day-03/        ← Présentation Jour 3
 │   ├── day-04/        ← Présentation Jour 4
-│   ├── day-05/        ← Présentation Jour 5
-│   └── day-06/        ← Présentation Jour 6
+│   └── day-05/        ← Présentation Jour 5
 ├── static/
 │   └── resources/     ← Fichiers ressources téléchargeables (instructions, prompts, skills, agents)
 └── package.json

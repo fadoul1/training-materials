@@ -2,8 +2,7 @@
 name: generate-tests
 description: Generate JUnit 5 unit tests for a service or controller class
 agent: agent
-model: claude-sonnet-4-5
-tools: ["editFiles", "createFile"]
+model: Claude Sonnet 5.5 (copilot)
 ---
 
 # Generate Unit Tests — Employee Service

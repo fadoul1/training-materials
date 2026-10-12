@@ -1,50 +1,88 @@
 ---
-title: "Module 5 — Workflow End-to-End et Projet Final"
+title: "Module 5 — Agent Plugins et Capstone"
 sidebar_position: 5
 ---
 
-# Module 5 — Workflow End-to-End et Projet Final
+# Module 5 — Agent Plugins et Capstone
 
 **Duree : 2h 00m** | **Jour 5**
 
 ## Objectif
 
-Appliquer l'ensemble des mecanismes sur un cycle de vie complet de fonctionnalite et livrer un environnement Copilot personnel complet.
+Packager et partager les primitives de la semaine sous forme d'agent plugin installable dans n'importe quel repository, puis les utiliser toutes ensemble sur une tache de bout en bout.
 
-## Partie A — Workflow End-to-End (40 min)
+:::info Pas de lab dedie pour ce module
+Ce module n'a pas de lab separe dans `/labs` : la construction du plugin et le capstone sont l'atelier du jour, detailles ci-dessous et dans les slides.
+:::
 
-Un scenario unique qui exerce chaque mecanisme construit lors des Modules 1 a 4, en sequence :
+---
 
-1. Lire une specification de fonctionnalite avec `@workspace`
-2. Generer un squelette de code — les instructions always-on et file-based formatent la sortie
-3. Generer des tests unitaires — invoquer `/generate-tests` (Module 2)
-4. Executer les tests et obtenir des suggestions — le skill test-runner (Module 3) s'active
-5. Refactorer l'implementation — le custom agent (Module 4) applique les corrections Clean Code
-6. Revue du resultat final — invoquer `/review-code` (Module 2)
-7. Evaluer la sortie complete avec le framework de qualite (Module 1)
+## Partie 1 — Agent Plugins (55 min)
 
-## Partie B — Projet Final (1 heure)
+### Theorie (15 min)
 
-Chaque participant concoit un environnement Copilot complet pour un projet reel ou representatif de son choix.
+Un plugin **n'est pas** une nouvelle primitive — c'est un **package** de primitives (skills, agents, serveurs MCP, hooks) qui s'installent ensemble, pour qu'elles entrent dans la boucle de Copilot dans **chaque** repository ouvert, au lieu de copier des fichiers `.github/` et de les garder synchronises a la main. VS Code suit le standard ouvert **Agent Plugins 1.0** (egalement utilise par Copilot CLI).
 
-### Livrables requis
+#### Sujets couverts
 
-- `copilot-instructions.md` — instructions always-on adaptees a l'architecture du projet
-- Au moins un `*.instructions.md` — regle file-based pour une couche ou type de fichier specifique
-- Deux prompt files — commandes slash parametrisees et reutilisables
-- Un agent skill — complet avec `SKILL.md` et au moins un script fonctionnel
-- Un custom agent — avec system prompt, restrictions d'outils et limites de scope verifiees
+- Structure d'un plugin : `plugin.json` (manifeste), `skills/` et `mcp.json` (portables), `com.github.copilot/` (specifique a l'outil — agents, hooks)
+- Le manifeste `plugin.json` : `$schema` et `name` obligatoires, `version` a incrementer a chaque release
+- `${PLUGIN_ROOT}` : la variable qui rend un hook de plugin portable d'un repository a l'autre (contrairement a un chemin relatif `.github/...`)
+- La difference de cle entre le `mcp.json` du workspace (`servers`) et celui d'un plugin (`mcpServers`) — l'erreur de format la plus frequente
+- Quand mettre une regle dans un plugin (partagee entre plusieurs repos/equipes) vs. dans le `.github/` d'un seul repo (specifique a ce codebase)
+- Risques : les hooks et serveurs MCP d'un plugin s'executent **sans prompt de confiance** a l'installation — installer un plugin, c'est deja la decision de confiance
 
-### Grille d'evaluation
+### Atelier guide — construire, installer, partager (40 min)
 
-| Critere | Poids |
-|---------|-------|
-| Instructions adaptees a l'architecture et conventions du projet | 20% |
-| Prompt files parametrises avec sortie coherente | 20% |
-| Skill qui s'active de maniere fiable avec sortie structuree | 20% |
-| Custom agent avec scope bien defini et restrictions d'outils | 20% |
-| Tous les artefacts fonctionnent ensemble comme un systeme coherent | 20% |
+1. **Manifeste** : creer `plugins/mon-copilot-kit/plugin.json` avec `$schema`, `name` (minuscules, tirets, points), `version`, `description`
+2. **Skill, agent, scripts** : copier sans modification le skill, l'agent et les scripts de hook deja construits les jours precedents dans la structure du plugin
+3. **Hook** : adapter le chemin du hook avec `${PLUGIN_ROOT}` au lieu du chemin relatif du workspace, et adapter le message de refus pour identifier le plugin
+4. **Serveur MCP** : creer `mcp.json` avec la cle `mcpServers` (pas `servers`)
+5. **Installer en local** : declarer le plugin dans `chat.pluginLocations` (parametres utilisateur), verifier qu'il apparait dans **Chat: Open Customizations → Plugins** avec son skill, son agent, son serveur MCP et son hook
+6. **Prouver que ca marche ailleurs** : ouvrir un dossier **sans aucun** `.github/`, verifier que le hook du plugin protege quand meme les migrations existantes
+7. **Desactiver** : couper le plugin et constater que skill, agent, MCP et hook disparaissent tous ensemble — un plugin se desactive comme un tout
 
-### Debrief (15 min)
+### Partager, en securite (15 min)
 
-Chaque participant presente un artefact et explique une decision de conception et son pourquoi.
+- Une marketplace est juste un depot Git avec un index (`marketplace.json`) — epingler un **SHA de commit complet** pour des installs reproductibles
+- **Checklist avant d'installer un plugin tiers :** qui le publie ? la marketplace est-elle approuvee par l'organisation ? a-t-on lu `hooks.json` et chaque script appele ? a-t-on lu `mcp.json` (commandes, URLs, variables d'environnement) ?
+- Les administrateurs peuvent restreindre les marketplaces et forcer `allowManagedHooksOnly` pour n'autoriser que des hooks geres centralement
+
+---
+
+## Partie 2 — Capstone : toutes les primitives ensemble (1h 05m)
+
+### Le scenario
+
+Un probleme trouve en Jour 1 par `/review-code` (une donnee personnelle loguee), transforme en issue GitHub par MCP en Jour 4, est maintenant corrige de bout en bout en mobilisant **chaque** primitive de la semaine, dans l'ordre :
+
+| Etape | Action | Primitive mobilisee |
+|-------|--------|----------------------|
+| 1 | Lire l'issue GitHub et resumer ce qui doit changer | MCP |
+| 2 | Corriger le code source du probleme (mode Agent) | Instructions always-on — la regle precise decide de la nouvelle ligne de log |
+| 3 | Ajouter un test prouvant que la donnee n'est plus loguee | Instructions file-based (conventions de test) |
+| 4 | Lancer les tests et corriger les echecs | Skill `run-and-fix-tests` |
+| 5 | Nettoyer le code sans changer le comportement | Custom agent — puis suivre son handoff vers la validation des tests |
+| 6 | Tenter aussi de "nettoyer" une migration existante au passage | Hook — refuse |
+| 7 | Revue de code finale → doit passer | Prompt file `/review-code` |
+| 8 | Commenter l'issue avec un resume du correctif | MCP |
+
+### Debrief collectif
+
+1. A quelle etape avez-vous tape le moins de mots pour le plus de resultat, et pourquoi ?
+2. Quelle regle a ete **appliquee** sans que vous le demandiez, et laquelle a ete **imposee** (vous n'auriez pas pu l'empecher meme en insistant) ?
+3. En suivant le principe "commencer petit" : quelle **seule** customisation ajouteriez-vous a votre propre projet la semaine prochaine, et quelle primitive est-ce ?
+
+---
+
+## Recapitulatif de la semaine
+
+| Jour | Primitive(s) | L'exemple du jour |
+|------|--------------|---------------------|
+| 1 | Fondamentaux — modele mental, contexte, tokens | Demo avant/apres |
+| 2 | Always-on · File-based · Prompt | `copilot-instructions.md` · `*.instructions.md` · `/review-code` |
+| 3 | Skill · Custom agent | `run-and-fix-tests` · Refactoring Expert |
+| 4 | MCP · Hook | Serveur GitHub · `protect-migrations` |
+| 5 | Plugin | Le kit de la semaine, packagé et installable |
+
+> Les instructions mettent en forme le **contexte**, les prompts/skills/agents mettent en forme la **tache**, MCP donne de la **portee**, les hooks **imposent** — et les plugins **partagent** tout cela.

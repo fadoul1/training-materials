@@ -2,7 +2,7 @@
 name: review-code
 description: Review the selected code against project standards (architecture, security, quality)
 agent: ask
-model: claude-sonnet-4-5
+model: Claude Sonnet 5.5 (copilot)
 ---
 
 # Code Review — Employee Service Standards

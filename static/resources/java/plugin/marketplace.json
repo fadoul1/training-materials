@@ -1,0 +1,17 @@
+{
+  "name": "employee-training",
+  "owner": {
+    "name": "Accenture Copilot Training"
+  },
+  "metadata": {
+    "description": "Copilot plugins for the Employee Service team"
+  },
+  "plugins": [
+    {
+      "name": "employee-copilot-kit",
+      "source": "./plugins/employee-copilot-kit",
+      "description": "run-and-fix-tests skill, Refactoring Expert agent, Flyway migration guard hook and GitHub MCP server.",
+      "version": "1.0.0"
+    }
+  ]
+}

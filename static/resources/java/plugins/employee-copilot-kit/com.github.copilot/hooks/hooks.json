@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "bash ${PLUGIN_ROOT}/scripts/protect-migrations.sh",
+        "windows": "powershell -NoProfile -ExecutionPolicy Bypass -File ${PLUGIN_ROOT}/scripts/protect-migrations.ps1",
+        "timeout": 15
+      }
+    ]
+  }
+}

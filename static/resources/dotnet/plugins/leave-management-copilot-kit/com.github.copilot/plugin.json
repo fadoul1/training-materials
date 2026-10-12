@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "leave-management-copilot-kit",
+  "version": "1.0.0",
+  "description": "Leave Management API team kit: run-and-fix-tests and ef-core-migration skills, Clean Architecture Refactor Expert agent, EF Core migration guard hook and GitHub MCP server.",
+  "author": {
+    "name": "Accenture Copilot Training"
+  },
+  "license": "MIT",
+  "keywords": ["aspnet-core", "dotnet", "ef-core", "testing", "refactoring"]
+}

@@ -1,40 +1,99 @@
 ---
-title: "Module 4 — Custom Agents : personas specialisees avec scope controle"
+title: "Module 4 — MCP et Hooks"
 sidebar_position: 4
 ---
 
-# Module 4 — Custom Agents : personas specialisees avec scope controle
+# Module 4 — MCP et Hooks
 
-**Duree : 1h 00m** | **Jour 4**
+**Duree : 2h 00m** | **Jour 4**
 
 ## Objectif
 
-Creer des personas IA specialisees avec un scope controle, un acces aux outils limite et la capacite d'orchestrer d'autres agents pour du travail multi-etapes.
+Donner a Copilot de la **portee** au-dela de l'editeur avec le Model Context Protocol (MCP), puis **faire respecter** une regle de maniere deterministe avec les hooks — la ou les instructions ne font que suggerer, le hook bloque.
 
-## Theorie (30 min)
+:::info Pas de lab dedie pour ce module
+Ce module n'a pas de lab separe dans `/labs` : l'atelier guide est integre directement dans la theorie ci-dessous et dans les slides du jour.
+:::
 
-Un custom agent est une persona IA persistante definie dans un fichier Markdown. Il a son propre system prompt, son propre ensemble d'outils autorises, ses propres preferences de modele et ses propres limites de scope.
+---
 
-### Concepts cles
+## Partie 1 — Primitive 6 : MCP (50 min)
 
-- **Restrictions d'outils** — vous pouvez lister explicitement quels outils l'agent peut utiliser
-- **Orchestration de sous-agents** — un agent peut deleguer une sous-tache a un autre agent specialise
+### Theorie (25 min)
 
-### Sujets couverts
+Le Model Context Protocol (MCP) ajoute des outils externes au choix du modele au moment de l'action — ils rejoignent les outils integres de l'editeur. Un serveur MCP donne a Copilot une **portee** sur des systemes en dehors de l'editeur (GitHub, une base de donnees, une API), la ou un skill lui donne un **savoir-faire** procedural.
 
-- Structure Markdown d'un custom agent : frontmatter, system prompt, `tools`, `model`
-- Comment ecrire un system prompt suffisamment specifique sans etre trop restrictif
-- Restrictions explicites d'outils : pourquoi limiter les outils est une fonctionnalite
-- Definition du scope : ce que l'agent doit faire et ce qu'il ne doit pas faire
-- Orchestration de sous-agents : `delegate`, passage de contexte, reprise
-- Archetypes d'agents : refactoring agent, migration agent, security audit agent
+#### Sujets couverts
 
-## Lab (30 min)
+- Anatomie de `.vscode/mcp.json` : la cle `servers`, les types `http` (serveur distant, OAuth automatique) et `stdio` (processus local via `command` / `args`)
+- Le serveur GitHub officiel (`https://api.githubcopilot.com/mcp/`) comme exemple de reference
+- Gestion des secrets : jamais en clair dans le fichier — declarer un `inputs` avec `"password": true` et `${input:api-key}`
+- **Configure Tools** : activer uniquement les outils necessaires a la tache — chaque outil active est envoye au modele a chaque requete
+- Le reflexe de securite : ne jamais approuver un appel d'outil (creation d'issue, push) sans lire exactement ce qu'il va faire — l'appel s'execute avec **vos** identifiants
+- Quand utiliser MCP (lire/modifier un systeme externe) vs. une skill (savoir comment faire) vs. rien (l'information est deja dans le repo)
 
-Voir les labs correspondants :
-- [Lab Java](/labs/java)
-- [Lab .NET](/labs/dotnet)
+### Atelier guide (25 min)
 
-### Livrable
+1. Demarrer le serveur MCP `github` depuis `.vscode/mcp.json` (Command Palette → **MCP: List Servers**) et s'authentifier
+2. Ouvrir **Configure Tools**, ne garder actifs que les outils lies aux issues
+3. Demander a Copilot (mode Agent) de creer une issue GitHub a partir d'un finding de revue de code (ex. donnee personnelle loguee), **verifier** le contenu exact de l'appel propose avant d'approuver
+4. Verifier la creation en listant les issues ouvertes correspondant au titre
 
-Un custom agent de refactoring fonctionnel, avec des limites de scope verifiees et au moins une tache completee demontree.
+> **A retenir :** la revue de code (Jour 1) trouve le probleme ; MCP le place la ou l'equipe suit son travail, sans quitter l'editeur.
+
+---
+
+## Partie 2 — Primitive 7 : Hooks (50 min)
+
+### Theorie (25 min)
+
+Un hook execute votre propre commande a des points fixes du cycle de vie, **en dehors du modele**. `PreToolUse` s'execute avant chaque appel d'outil et peut seul **bloquer** l'action. La ou les instructions *demandent*, les hooks *imposent*.
+
+Exemple : `copilot-instructions.md` dit *"ne jamais modifier une migration existante"*. Copilot obeit generalement, mais une seule violation casse les checksums Flyway (Java) ou corrompt l'historique EF Core (.NET) dans tous les environnements ou la migration a deja ete appliquee. Pour une regle ou **une seule** violation coute cher, on ajoute un hook.
+
+#### Sujets couverts
+
+- Le cycle `PreToolUse` → outil execute (ou non) → `PostToolUse`, et les autres evenements : `SessionStart`, `UserPromptSubmit`, `Stop`
+- Anatomie de `.github/hooks/security.json` : `command` / `windows` par OS, `timeout` en secondes
+- Le contrat stdin/stdout : le hook recoit l'appel d'outil en JSON sur stdin, et repond via `permissionDecision` — `deny` (avec une raison lue par le modele), `ask`, `allow`, ou **rien** (= autorisation implicite)
+- **Fail open** : une entree invalide doit toujours se terminer par `exit 0`, pour qu'un payload corrompu ne bloque jamais tout le travail
+- L'exemple de reference : `protect-migrations` — bloque l'edition d'un fichier de migration **deja applique** (`V{n}__*.sql` en Flyway, `*.cs` sous `Migrations/` en EF Core), mais autorise la creation d'une nouvelle migration
+- Pourquoi garder la regle **aussi** dans les instructions : le hook bloque l'action, les instructions evitent que Copilot la planifie en premier lieu
+
+#### Instructions vs. Hooks
+
+| | Instructions | Hook |
+|-|---------------|------|
+| Nature | Texte dans le prompt | Un programme en dehors du modele |
+| Garantie | Probabiliste | Deterministe |
+| Peut bloquer une action | Non | Oui |
+| Cout | Tokens a chaque requete | Un processus court par evenement — zero token |
+
+### Atelier guide (25 min)
+
+1. Verifier que le hook est charge (**Chat: Configure Hooks**, sortie **GitHub Copilot Chat Hooks** visible)
+2. Demander explicitement a Copilot de modifier un champ dans une migration **deja appliquee** (ex. `V1__create_employee_table.sql` ou la premiere migration EF Core)
+3. Observer : le hook renvoie `deny`, l'edition n'est **pas** appliquee, la raison apparait dans le chat ; Copilot cree a la place une nouvelle migration (`V3__...` ou une nouvelle classe sous `Migrations/`)
+4. Verifier avec `git status` que seul le nouveau fichier de migration a ete ajoute
+5. Tester le hook hors Copilot en lui envoyant directement un payload JSON sur stdin — un avec un fichier existant (doit refuser) et un avec un nouveau fichier (doit autoriser)
+
+> **A retenir :** testez toujours un hook avec un payload qu'il doit **refuser** et un qu'il doit **laisser passer** — une regex trop large bloquerait aussi la creation de la nouvelle migration.
+
+#### Anti-patterns
+
+- Un hook lent (reseau, build complet) — il s'execute a chaque appel d'outil, il doit rester de l'ordre de la milliseconde
+- Supposer que l'absence de sortie signifie un refus — l'absence de sortie signifie **autoriser**
+- Un hook comme seule barriere de securite — c'est un fil-piege, la protection de branche et la CI restent necessaires
+
+---
+
+## Recapitulatif
+
+| Primitive | Role | Exemple du jour |
+|-----------|------|------------------|
+| MCP | Donner acces a des systemes externes | Le serveur GitHub cree l'issue de suivi |
+| Hooks | Imposer une regle de maniere deterministe | `protect-migrations` refuse l'edition, Copilot cree une nouvelle migration |
+
+> **Portee, procedure, application :** MCP donne a Copilot de la portee, les skills lui donnent une procedure, les hooks vous donnent un moyen de faire appliquer une regle.
+
+Demain, ces briques — skill, agent, hook et serveur MCP — sont packagees ensemble dans **un seul plugin** que toute une equipe peut installer.

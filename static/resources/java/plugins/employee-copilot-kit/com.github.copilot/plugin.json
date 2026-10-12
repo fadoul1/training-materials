@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "employee-copilot-kit",
+  "version": "1.0.0",
+  "description": "Employee Service team kit: run-and-fix-tests skill, Refactoring Expert agent, Flyway migration guard hook and GitHub MCP server.",
+  "author": {
+    "name": "Accenture Copilot Training"
+  },
+  "license": "MIT",
+  "keywords": ["spring-boot", "java", "flyway", "testing", "refactoring"]
+}

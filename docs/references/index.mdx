@@ -12,7 +12,7 @@ sidebar_position: 1
 - [Custom Instructions](https://code.visualstudio.com/docs/copilot/copilot-customization)
 - [Agent Skills (agentskills.io)](https://agentskills.io)
 
-## Les 5 mecanismes de personnalisation
+## Les 7 primitives de personnalisation
 
 | Mecanisme | Ce qu'il fait |
 |-----------|---------------|
@@ -21,6 +21,10 @@ sidebar_position: 1
 | Prompt files | Commandes slash reutilisables pour les taches recurrentes |
 | Agent skills | Workflows automatises multi-etapes avec scripts |
 | Custom agents | Personas IA specialisees avec scope et outils controles |
+| MCP | Donne a Copilot de la portee sur des systemes externes (GitHub, une API) |
+| Hooks | Impose une regle de maniere deterministe, en dehors du modele |
+
+Les plugins ne sont pas une primitive supplementaire : ils **packagent** des skills, agents, serveurs MCP et hooks pour les partager entre repositories et equipes.
 
 ## Fichiers de reference — Parcours Java
 
@@ -35,6 +39,8 @@ sidebar_position: 1
 | Skill | [call-employee-api/SKILL.md](pathname:///resources/java/skills/call-employee-api/SKILL.md) |
 | Agent | [refactoring-expert.agent.md](pathname:///resources/java/agents/refactoring-expert.agent.md) |
 | Agent | [spring-migration-expert.agent.md](pathname:///resources/java/agents/spring-migration-expert.agent.md) |
+| Hook | [security.json](pathname:///resources/java/hooks/security.json) + [protect-migrations.ps1](pathname:///resources/java/hooks/scripts/protect-migrations.ps1) / [.sh](pathname:///resources/java/hooks/scripts/protect-migrations.sh) |
+| Plugin | [employee-copilot-kit](pathname:///resources/java/plugins/employee-copilot-kit/com.github.copilot/plugin.json) + [marketplace.json](pathname:///resources/java/plugin/marketplace.json) |
 
 ## Fichiers de reference — Parcours .NET
 
@@ -52,6 +58,8 @@ sidebar_position: 1
 | Skill | [ef-core-migration/SKILL.md](pathname:///resources/dotnet/skills/ef-core-migration/SKILL.md) |
 | Agent | [clean-architecture-refactor-expert.agent.md](pathname:///resources/dotnet/agents/clean-architecture-refactor-expert.agent.md) |
 | Agent | [c-sharp-migration-specialist.md](pathname:///resources/dotnet/agents/c-sharp-migration-specialist.md) |
+| Hook | [security.json](pathname:///resources/dotnet/hooks/security.json) + [protect-migrations.ps1](pathname:///resources/dotnet/hooks/scripts/protect-migrations.ps1) / [.sh](pathname:///resources/dotnet/hooks/scripts/protect-migrations.sh) |
+| Plugin | [leave-management-copilot-kit](pathname:///resources/dotnet/plugins/leave-management-copilot-kit/com.github.copilot/plugin.json) + [marketplace.json](pathname:///resources/dotnet/plugin/marketplace.json) |
 
 ## Glossaire
 

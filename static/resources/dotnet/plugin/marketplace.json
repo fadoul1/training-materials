@@ -1,0 +1,17 @@
+{
+  "name": "leave-management-training",
+  "owner": {
+    "name": "Accenture Copilot Training"
+  },
+  "metadata": {
+    "description": "Copilot plugins for the Leave Management API team"
+  },
+  "plugins": [
+    {
+      "name": "leave-management-copilot-kit",
+      "source": "./plugins/leave-management-copilot-kit",
+      "description": "run-and-fix-tests and ef-core-migration skills, Clean Architecture Refactor Expert agent, EF Core migration guard hook and GitHub MCP server.",
+      "version": "1.0.0"
+    }
+  ]
+}

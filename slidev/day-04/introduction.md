@@ -1,6 +1,6 @@
 ---
-title: "Jour 4 — Custom Agents : personas IA specialisees"
-description: "Creer des agents avec une methodologie propre, des gardes-fous et des handoffs entre specialistes"
+title: "Jour 4 — MCP et Hooks"
+description: "Donner a Copilot de la portee sur des systemes externes avec MCP, puis imposer une regle de maniere deterministe avec les hooks"
 author: Accenture
 theme: default
 highlighter: shiki
@@ -9,14 +9,14 @@ transition: slide-left
 
 # GitHub Copilot in Practice
 
-## Jour 4 — Custom Agents : personas IA specialisees
+## Jour 4 — MCP et Hooks
 
 <br>
 
 
 <!--
-Aujourd'hui on cree des agents specialises — des personas IA avec leur propre facon de penser, de repondre et leurs propres gardes-fous.
-La difference avec les instructions : un agent est actif, il a une identite et la maintient sur toute une session.
+Aujourd'hui on sort de l'editeur dans les deux sens.
+MCP donne a Copilot acces a des systemes externes. Les hooks nous donnent, a nous, un moyen de reprendre le controle sur ce que Copilot a le droit de faire.
 -->
 
 ---
@@ -31,26 +31,48 @@ layout: section
 
 <v-clicks>
 
-1. **Rappel** — Les 4 primitives maitrisees, la derniere aujourd'hui
-2. **Qu'est-ce qu'un Custom Agent ?** — La difference avec les instructions et les prompts
-3. **La formule de l'agent** — Les 5 sections obligatoires
-4. **Les agents du projet** — Refactoring Expert et C# Migration Specialist
-5. **Les handoffs** — Chaîner des agents specialistes entre eux
-6. **Les gardes-fous** — "Ce que je ne fais jamais" est aussi important que les capacites
-7. **Demo** — Comparer Copilot par defaut vs. agent specialise
-8. **Lab 04** — Vous creez un agent Security Reviewer de zero
+**Partie 1 — MCP**
+
+1. **Rappel** — Les 5 primitives acquises, deux nouvelles aujourd'hui
+2. **Qu'est-ce que MCP ?** — Donner de la portee, pas du savoir-faire
+3. **Anatomie de `mcp.json`** — `servers`, `type: http` vs `stdio`, les secrets
+4. **Le serveur GitHub** — OAuth automatique, aucune installation
+5. **Configure Tools** — pourquoi n'activer que ce dont vous avez besoin
+6. **Demo** — transformer un finding de revue en issue GitHub
+7. **Atelier guide** — vous creez l'issue vous-meme
 
 </v-clicks>
+
+---
+
+# Ce que nous allons couvrir (suite)
+
+<v-clicks>
+
+**Partie 2 — Hooks**
+
+8. **Pourquoi les instructions ne suffisent pas toujours**
+9. **Le cycle `PreToolUse` / `PostToolUse`**
+10. **Anatomie d'un hook** — stdin, stdout, `permissionDecision`
+11. **L'exemple de reference** — `protect-migrations`
+12. **Demo** — tenter de casser la regle, et echouer
+13. **Atelier guide** — tester le hook en dehors de Copilot
+
+</v-clicks>
+
+<!--
+Pas de lab separe aujourd'hui : chaque atelier guide est integre directement dans la session.
+-->
 
 ---
 layout: section
 ---
 
-# Rappel — La derniere primitive
+# Rappel — Ou on en est
 
 ---
 
-# Les 5 primitives — Ligne d'arrivee
+# Les 7 primitives — Feuille de route
 
 | # | Primitive | Statut |
 |---|-----------|--------|
@@ -58,13 +80,15 @@ layout: section
 | 2 | File-Based Instructions | ✅ Acquis |
 | 3 | Prompt Files | ✅ Acquis |
 | 4 | Agent Skills | ✅ Acquis |
-| **5** | **Custom Agents** | 🔵 **Aujourd'hui** |
+| 5 | Custom Agents | ✅ Acquis |
+| **6** | **MCP** | 🔵 **Aujourd'hui** |
+| **7** | **Hooks** | 🔵 **Aujourd'hui** |
 
 <br>
 
 <v-click>
 
-> Demain : **Jour 5** — vous assemblez les 5 primitives ensemble sur un workflow complet de bout en bout.
+> Jusqu'ici, tout ce que Copilot pouvait faire restait **dans l'editeur** : lire des fichiers, en ecrire, lancer un terminal. Aujourd'hui, on ouvre la porte vers l'exterieur — et on pose une serrure dessus.
 
 </v-click>
 
@@ -72,111 +96,49 @@ layout: section
 layout: section
 ---
 
-# Primitive 5 — Custom Agents
+# Primitive 6 — MCP
 
 ---
 
-# Qu'est-ce qu'un Custom Agent ?
+# Qu'est-ce que le Model Context Protocol ?
 
-> Un **Custom Agent** est une persona IA specialisee avec sa propre methodologie, son propre format de reponse et ses propres gardes-fous. Il maintient son identite sur **toute la session**.
+> **MCP** ajoute les outils d'un serveur externe a la liste des outils que le modele peut choisir, au moment de l'action. Un serveur MCP donne a Copilot de la **portee** sur des systemes hors de l'editeur (GitHub, une base de donnees, une API).
 
 <br>
 
 <v-clicks>
 
-- Un agent n'est pas une liste de regles — c'est un **expert avec une façon de penser**
-- Il s'active via le selecteur d'agent : `@nom-de-lagent`
-- Chaque question dans la session beneficie du contexte accumule depuis le debut
-- Il peut **refuser** des requetes qui violent ses principes
+**Skill vs. MCP — ne pas confondre :**
+
+| Skill | MCP |
+|-------|-----|
+| Donne un **savoir-faire** procedural | Donne une **portee** sur un systeme externe |
+| S'execute avec les outils deja disponibles (terminal, fichiers) | Ajoute de **nouveaux** outils au modele |
+| "Comment lancer et diagnostiquer les tests" | "Lire et creer des issues sur GitHub" |
 
 </v-clicks>
 
 ---
 
-# Instructions vs. Custom Agents — La difference cle
+# Anatomie de `.vscode/mcp.json`
 
-| Always-On Instructions | Custom Agent |
-|------------------------|-------------|
-| "Utilise les constructeurs primaires" | "Je suis un expert refactoring. Je diagnostique les violations." |
-| Regles de style passives | Persona active avec une methodologie |
-| Toujours en contexte | Active par `@agent-name` |
-| Pas de memoire de conversation | Maintient sa persona sur toute la session |
-| Dit quoi faire | Decide comment approcher le probleme |
-
-<br>
-
-<v-click>
-
-> **Analogie :** Les instructions sont le **reglement interne** de l'equipe. Un agent est un **consultant expert** que vous appelez pour une mission.
-
-</v-click>
-
----
-
-# Ou vivent les agents
-
-```
-.github/
-└── agents/
-    └── {nom}.agent.md        ← n'importe quel .md dans agents/
-```
-
-<br>
-
-```yaml
----
-name: clean-architecture-refactor-expert   ← affiché dans le selecteur
-description: "..."                         ← texte d'aide dans le chat
----
+```json
+{
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}
 ```
 
 <v-clicks>
 
-- Le **nom** doit etre en minuscules avec tirets — c'est ce que vous tapez apres `@`
-- La **description** aide les developpeurs a choisir le bon agent
-- Le **corps** du fichier est le system prompt de l'agent
-
-</v-clicks>
-
----
-layout: section
----
-
-# La formule de l'agent — 5 sections
-
----
-
-# La formule en 5 sections
-
-Tout agent efficace repond a ces 5 questions :
-
-<v-clicks>
-
-| Section | Question | Exemple |
-|---------|----------|---------|
-| **Qui je suis** | Persona + background | "Senior .NET architect, 20 ans d'experience" |
-| **Comment je pense** | Methodologie + questions que je pose toujours | "Est-ce que ce handler injecte ApplicationContext ?" |
-| **Comment je reponds** | Structure de sortie + format | "Tableau de violations, puis plan, puis diffs" |
-| **Ce que je fais toujours** | Comportements constants | "Fournir un fix pour chaque violation trouvee" |
-| **Ce que je ne fais jamais** | Gardes-fous | "Ne jamais suggerer de static — toujours DI" |
-
-</v-clicks>
-
----
-
-# Pourquoi "Ce que je ne fais jamais" est crucial
-
-<v-clicks>
-
-Sans gardes-fous, un agent derive :
-- L'utilisateur demande quelque chose de contraire aux bonnes pratiques
-- L'agent obtempere — il est "poli" par defaut
-- Le code produit viole l'architecture du projet
-
-Avec gardes-fous :
-- L'agent **refuse** et **explique pourquoi**
-- Le refus est une valeur ajoutee, pas un obstacle
-- L'agent reste coherent meme sous pression
+- `servers` — une entree par serveur (dans un plugin, la cle devient `mcpServers` — Jour 5)
+- `type: http` — un serveur **distant**, rien a installer ; `type: stdio` demarre un processus local via `command` / `args`
+- Pas de token visible — VS Code authentifie avec OAuth au premier demarrage
+- Fichier **committe** — toute l'equipe utilise les memes serveurs
 
 </v-clicks>
 
@@ -184,8 +146,27 @@ Avec gardes-fous :
 
 <v-click>
 
-> **Exemple :** "Peux-tu deplacer la logique de validation dans une classe utilitaire statique ?"
-> L'agent refuse : "La validation statique casse l'injection de dependances et rend les tests impossibles."
+> Pour un serveur qui a besoin d'une cle, ne jamais la coder en dur : declarer un `inputs` avec `"password": true` et la referencer via `${input:api-key}` — VS Code la demande une fois et la stocke de maniere securisee.
+
+</v-click>
+
+---
+
+# Quand utiliser MCP — et quand ne pas l'utiliser
+
+| Utiliser MCP | Utiliser autre chose |
+|--------------|------------------------|
+| Copilot doit **lire ou modifier** un systeme externe (issues, donnees, une API en cours d'execution) | Copilot doit savoir **comment** faire quelque chose → **Skill** |
+| Un CLI ne suffit pas, ou il faut des resultats structures | L'information est deja dans le repo → rien a ajouter |
+
+<br>
+
+<v-click>
+
+**Anti-patterns :**
+- **Tous les outils actives** — chaque outil est envoye au modele a chaque requete. Le serveur GitHub en expose des dizaines : dans **Configure Tools**, ne garder que ce dont la tache a besoin
+- **Approuver un appel d'outil sans le lire** — un `create_issue` ou un push s'execute avec **vos** identifiants
+- **Secrets en clair dans le fichier** — toujours `inputs` ou OAuth
 
 </v-click>
 
@@ -193,41 +174,43 @@ Avec gardes-fous :
 layout: section
 ---
 
-# Les agents du projet
+# Demo — Du finding a l'issue GitHub
 
 ---
 
-# Agent 1 — Clean Architecture Refactor Expert
+# Demo — Transformer une revue en ticket
 
-**Fichier :** `.github/agents/clean-architecture-refactor-expert.agent.md`
+**Contexte :** `/review-code` (Jour 1) a trouve qu'un controller logue une donnee personnelle (`request.getEmail()` / un email en clair dans un log C#).
 
 <v-clicks>
 
-**Persona :** Senior .NET architect, 20+ ans d'experience en Clean Architecture
+**Etape 1 :** Demarrer le serveur `github` (Command Palette → **MCP: List Servers** → **Start**), s'authentifier
 
-**Specialite :** Violations CQRS, injection de `ApplicationContext`, mapping inline, logging par interpolation, `CancellationToken` manquant
+**Etape 2 :** **Configure Tools** → ne garder actifs que les outils lies aux issues
 
-**Comment il repond :**
-1. **Tableau de violations** — Location / Violation / Severite / Regle violee
-2. **Plan de refactoring** — etapes sequentielles, chaque etape laisse le projet compilable
-3. **Diffs avant/apres** — code concret pour chaque correction
-4. **Handoff** — "Lancez `/run-and-fix-tests` pour verifier que rien n'est casse"
+**Etape 3 :** En mode Agent :
+```
+Cree une issue GitHub dans <owner>/<repo>.
+Titre : "Donnee personnelle loguee dans le controller Employee"
+Corps : la methode concernee logue l'email en clair — a corriger
+pour loguer l'identifiant plutot que la donnee personnelle.
+```
+
+**Observer :** Copilot choisit l'outil `create_issue`, une boite de dialogue montre **exactement** le owner, le repo, le titre et le corps — **verifier avant d'approuver**.
 
 </v-clicks>
 
 ---
 
-# Agent 1 — Ses gardes-fous
-
-**Ce que l'expert ne fait jamais :**
+# Atelier guide — a vous de jouer
 
 <v-clicks>
 
-- N'injecte jamais `ApplicationContext` directement dans un handler
-- Ne suggere jamais de `static` — toujours DI
-- Ne propose jamais de mapper inline — toujours via un profile dedie
-- Ne consolide jamais plusieurs etapes de refactoring en un seul commit
-- Ne commence jamais a modifier sans avoir produit le tableau de violations
+1. Demarrer le serveur MCP `github` et vous authentifier
+2. Ouvrir **Configure Tools**, limiter aux outils d'issues
+3. Creer l'issue decrivant le probleme de donnee personnelle loguee trouve en Jour 1
+4. Verifier la creation en listant les issues ouvertes dont le titre mentionne le probleme
+5. Noter le numero de l'issue — vous la fermerez au Jour 5
 
 </v-clicks>
 
@@ -235,194 +218,193 @@ layout: section
 
 <v-click>
 
-> Testez ses gardes-fous : demandez-lui de "deplacer la validation dans un utilitaire statique". Il doit refuser et expliquer pourquoi DI est la bonne approche.
+> **A retenir :** la revue de code a trouve le bug ; MCP l'a place la ou l'equipe suit son travail, sans quitter l'editeur.
 
 </v-click>
-
----
-
-# Agent 2 — C# Migration Specialist
-
-**Fichier :** `.github/agents/c-sharp-migration-specialist.md`
-
-<v-clicks>
-
-**Persona :** Principal .NET engineer specialise dans les migrations de version
-
-**Specialite :** .NET 6/7/8 → .NET 10, `Startup.cs` → Minimal API, `SpecFlow` → Reqnroll, Swashbuckle → Scalar
-
-**Comment il repond :**
-1. **Audit de l'etat actuel** — versions des packages vs. versions cibles
-2. **Plan de migration** — etapes ordonnees, une seule chose a la fois
-3. **Checklist de verification** — `dotnet build` + `dotnet test` apres chaque etape
-
-**Sa garde-fous cle :** Ne jamais upgrader tous les packages en un seul commit
-
-</v-clicks>
 
 ---
 layout: section
 ---
 
-# Les handoffs — Chaîner les agents
+# Primitive 7 — Hooks
 
 ---
 
-# Pourquoi les handoffs ?
+# Pourquoi une instruction ne suffit pas toujours
 
 <v-clicks>
 
-Chaque agent est un **specialiste focuse**. Un seul agent ne peut pas tout faire efficacement :
+`copilot-instructions.md` dit : *"Ne jamais modifier un fichier de migration existant."*
 
-- L'expert refactoring sait ce qui est mauvais — mais ce n'est pas lui qui lance les tests
-- L'expert upgrade sait planifier — mais c'est le skill `run-and-fix-tests` qui valide
+La plupart du temps, Copilot obeit. Mais :
+- Editer une migration Flyway deja appliquee **casse les checksums** dans chaque environnement ou elle a deja tourne
+- Editer une migration EF Core deja appliquee **corrompt** l'historique de schema
 
 </v-clicks>
 
 <br>
 
-<v-clicks>
+<v-click>
 
-**Principle :** Chaque agent termine sa partie et **passe le relais** :
+Pour une regle ou **une seule** violation coute cher, une instruction (probabiliste) ne suffit pas. Il faut un **hook** (deterministe).
 
-```
-Clean Architecture Expert
-  → "Refactoring termine. Lancez /run-and-fix-tests pour valider."
-
-C# Migration Specialist
-  → "Migration appliquee. Lancez dotnet build, puis dotnet test."
-```
-
-</v-clicks>
+</v-click>
 
 ---
 
-# Workflow avec handoffs
+# Ou le hook s'insere dans la boucle
 
 ```
-@clean-architecture-refactor-expert
-   "Review ce handler et refactorise-le"
+ le modele decide d'appeler un outil
           │
-          ▼
-   Tableau violations + Plan + Diffs
+   [PreToolUse] ── deny ──► l'outil n'est PAS execute, la raison est renvoyee au modele
+          │ allow / ask / pas de sortie
+   l'outil s'execute (edition de fichier, terminal, MCP…)
           │
-          ▼
-   Handoff : "Run /run-and-fix-tests"
-          │
-          ▼
-   Skill run-and-fix-tests (auto-charge)
-          │
-          ▼
-   Tests passes ✅
-          │
-          ▼
-   /review-code  ← derniere validation
+   [PostToolUse] ──► retour optionnel vers le modele
 ```
-
-<v-click>
-
-> Chaque outil fait **une seule chose bien** — les handoffs maintiennent le contexte sans surcharger un seul agent.
-
-</v-click>
-
----
-layout: section
----
-
-# Demo — Copilot par defaut vs. Agent specialise
-
----
-
-# Demo — La meme question, deux agents differents
-
-**Fichier ouvert :** `CreateEmployeeHandler.cs`
-
-**Question :** `"Review this file and suggest improvements."`
 
 <v-clicks>
 
-**Copilot par defaut (Ask mode) :**
-- Repond en prose libre
-- Suggestions generiques sans severite
-- Pas de structure reproductible
-- Peut suggerer n'importe quel pattern
-
-**Clean Architecture Refactor Expert :**
-- Commence par le tableau de violations (Location / Violation / Severite / Regle)
-- Plan numerote — chaque etape laisse le projet compilable
-- Diffs avant/apres pour chaque correction
-- Refuse les suggestions contraires aux principes SOLID
+- `PreToolUse` — le **seul** evenement qui peut bloquer un appel d'outil, avant qu'il s'execute
+- Autres evenements : `SessionStart`, `UserPromptSubmit`, `PostToolUse`, `Stop`
+- Hooks disponibles en VS Code (agent mode, preview), Copilot CLI et le coding agent (branche par defaut uniquement)
 
 </v-clicks>
 
 ---
 
-# Demo — Tester un garde-fou
+# Anatomie de `.github/hooks/security.json`
 
-Toujours dans la session `@clean-architecture-refactor-expert` :
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "bash .github/hooks/scripts/protect-migrations.sh",
+        "windows": "powershell -NoProfile -ExecutionPolicy Bypass -File .github/hooks/scripts/protect-migrations.ps1",
+        "timeout": 15
+      }
+    ]
+  }
+}
+```
+
+<v-clicks>
+
+- `command` / `windows` — la commande selon l'OS ; `timeout` en secondes
+- Le script recoit l'appel d'outil en **JSON sur stdin** (`tool_name`, `tool_input.filePath`…)
+- En sortie : `permissionDecision` — `deny` + raison (Copilot lit pourquoi), `ask`, `allow`, ou **rien** = comportement normal
+- **Fail open** — une entree invalide doit toujours finir par `exit 0`, pour qu'un payload casse ne bloque jamais tout le travail
+
+</v-clicks>
+
+---
+
+# L'exemple de reference — `protect-migrations`
+
+Le hook bloque l'edition d'un fichier de migration **deja applique**, et autorise la creation d'une **nouvelle** migration :
+
+| Stack | Pattern protege | Nouvelle migration (autorisee) |
+|-------|------------------|-------------------------------|
+| Java / Flyway | `db/migration/V{n}__*.sql` existant | `V{n+1}__description.sql` |
+| .NET / EF Core | `*.cs` existant sous `Migrations/` | `dotnet ef migrations add {Nom}` |
+
+<br>
+
+<v-clicks>
+
+- Le script parcourt recursivement l'entree JSON pour trouver tous les chemins de fichiers touches (`filePath`, `file_path`, `path`, ou le format `apply_patch`)
+- Il ne refuse **que** si le fichier correspond au pattern **et** existe deja sur disque
+- Meme logique en PowerShell (`protect-migrations.ps1`) et en bash + `jq` (`protect-migrations.sh`) — un hook est juste un programme qui lit stdin
+
+</v-clicks>
+
+---
+layout: section
+---
+
+# Demo — Essayer de casser la regle
+
+---
+
+# Demo — Le prompt demande explicitement l'interdit
 
 ```
-Peux-tu deplacer la logique de validation
-hors du handler dans une classe utilitaire statique ?
+La recherche par departement est lente. Ajoute un index sur la colonne
+department directement dans le fichier de migration initial.
 ```
 
-<v-click>
+<v-clicks>
 
-**Resultat attendu :** L'agent refuse et explique :
-- Les classes statiques cassent l'injection de dependances
-- Les tests unitaires deviennent impossibles sans DI
-- La bonne approche : injecter le validator via le constructeur primaire
+**Ce qui se passe :**
+1. Copilot tente d'editer le fichier de migration existant
+2. Le hook renvoie `deny` — l'edition **n'est pas appliquee** ; la raison apparait dans le chat et dans la sortie **GitHub Copilot Chat Hooks**
+3. Copilot change de strategie et **cree une nouvelle migration** a la place
 
-</v-click>
+</v-clicks>
 
 <br>
 
 <v-click>
 
-> **Observation cle :** Le garde-fou tient meme quand l'utilisateur insiste. C'est la coherence d'un agent bien defini.
+> **Discussion :** le prompt demandait **explicitement** de modifier le fichier existant. Avec une simple instruction, Copilot aurait pu obeir a l'utilisateur. Avec le hook, la regle gagne — peu importe qui insiste.
 
 </v-click>
 
 ---
-layout: section
+
+# Atelier guide — tester le hook sans Copilot
+
+Un hook n'est qu'un programme qui lit stdin :
+
+```powershell
+'{"tool_name":"editFiles","tool_input":{"filePath":"<migration-existante>"}}' |
+  powershell -NoProfile -ExecutionPolicy Bypass -File .github/hooks/scripts/protect-migrations.ps1
+# Attendu : {"hookSpecificOutput":{..."permissionDecision":"deny"...}}
+
+'{"tool_name":"createFile","tool_input":{"filePath":"<nouvelle-migration>"}}' |
+  powershell -NoProfile -ExecutionPolicy Bypass -File .github/hooks/scripts/protect-migrations.ps1
+# Attendu : aucune sortie (autorise)
+```
+
+<v-click>
+
+> **Toujours tester un hook avec deux payloads :** un qu'il doit **refuser**, un qu'il doit **laisser passer**. Une regex trop large bloquerait aussi la creation d'une nouvelle migration.
+
+</v-click>
+
 ---
 
-# Construire un bon agent
+# Instructions vs. Hooks — Le recapitulatif
+
+| | Instruction | Hook |
+|-|-------------|------|
+| Nature | Texte dans le prompt | Un programme en dehors du modele |
+| Garantie | Probabiliste | Deterministe |
+| Peut bloquer une action | Non | Oui |
+| Cout | Tokens a chaque requete | Un processus court par evenement — zero token |
+
+<br>
+
+<v-click>
+
+> Utilisez un hook quand une **mauvaise action** coute plus cher qu'une mauvaise reponse : fichiers proteges, commandes dangereuses, audit. Gardez la regle **aussi** dans les instructions, pour que Copilot planifie correctement des le premier coup.
+
+</v-click>
 
 ---
 
-# Les erreurs courantes
+# Anti-patterns
 
 <v-clicks>
 
-**Agent trop vague :**
-```markdown
-# Qui je suis
-Je suis un expert en securite.
-```
-→ Copilot produit des reponses generiques, sans structure.
-
-**Agent trop restrictif :**
-→ L'agent refuse tout ce qui n'est pas dans son perimetre exact — inutilisable en pratique.
-
-**Pas de format de sortie defini :**
-→ Chaque reponse a une structure differente → impossible a parcourir rapidement.
-
-**Pas de gardes-fous :**
-→ L'agent derive des la premiere requete ambigue.
+- **Un hook lent** (reseau, build complet) — il s'execute a chaque appel d'outil, il doit rester de l'ordre de la milliseconde
+- **Supposer que l'absence de sortie signifie un refus** — l'absence de sortie signifie **autoriser**
+- **Un hook comme seule barriere de securite** — c'est un fil-piege ; la protection de branche et la CI restent necessaires. Ne jamais laisser l'agent modifier lui-meme son propre script de hook
 
 </v-clicks>
-
----
-
-# Agents vs. Prompts — Le guide de decision
-
-| Utilisez un **Prompt** quand | Utilisez un **Agent** quand |
-|-----------------------------|----------------------------|
-| Tache ponctuelle et precise (scaffolding) | Toute la conversation a besoin d'une persona |
-| Variables fill-in-the-blank | La persona est fixee au debut de la session |
-| Execution courte (une reponse) | Engagement long et multi-tours |
-| La tache est identique a chaque fois | L'expert doit poser des questions et iterer |
 
 ---
 layout: section
@@ -436,12 +418,12 @@ layout: section
 
 <v-clicks>
 
-- Un **Custom Agent** est une persona active avec methodologie, format et gardes-fous
-- La **formule en 5 sections** : Qui / Comment je pense / Comment je reponds / Toujours / Jamais
-- Les **gardes-fous** sont aussi importants que les capacites — ils empeche la derive
-- Les **handoffs** permettent de chaîner des specialistes sans surcharger un seul agent
-- `@clean-architecture-refactor-expert` → tableau violations + plan + diffs
-- `@c-sharp-migration-specialist` → audit + plan incremental + checklist de verification
+- **MCP** ajoute des outils externes au modele — il donne de la **portee**, la ou un skill donne un savoir-faire
+- Un serveur MCP se declare dans `mcp.json` (`servers`), avec OAuth ou un `inputs` secret — jamais de cle en clair
+- **Configure Tools** limite les outils actifs a ce dont la tache a besoin
+- Un **hook** `PreToolUse` est le seul point qui peut **bloquer** un appel d'outil, de maniere deterministe
+- `protect-migrations` refuse l'edition d'une migration deja appliquee, et laisse passer la creation d'une nouvelle
+- Instructions = probabiliste · Hooks = deterministe — gardez la regle dans les deux
 
 </v-clicks>
 
@@ -449,14 +431,14 @@ layout: section
 
 # Demain — Jour 5
 
-## Workflow End-to-End : les 5 primitives ensemble
+## Agent Plugins et Capstone
 
 <v-clicks>
 
-- Implementer une feature complete de bout en bout
-- Utiliser chaque primitive au bon moment dans le workflow
-- Voir comment les primitives se **complementent** — aucune ne fait tout seule
-- Debriefing collectif : quelle primitive a eu le plus d'impact ?
+- Packager le skill, l'agent, le hook et le serveur MCP de la semaine dans **un seul plugin**
+- Installer ce plugin et prouver qu'il fonctionne dans un repository qui n'a **aucun** `.github/`
+- Partager le plugin en securite — la checklist avant d'installer un plugin tiers
+- **Capstone** : fermer la boucle ouverte aujourd'hui, en mobilisant les 7 primitives de la semaine
 
 </v-clicks>
 
@@ -464,7 +446,7 @@ layout: section
 
 <v-click>
 
-**Le Jour 5 est le test final de tout ce que vous avez construit cette semaine.**
+**Pas de lab separe demain non plus : la construction du plugin et le capstone sont l'atelier du jour.**
 
 </v-click>
 

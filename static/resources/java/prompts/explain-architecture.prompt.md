@@ -2,8 +2,7 @@
 name: explain-architecture
 description: Explain the architecture of a module or the whole project (layers, dependencies, data flow)
 agent: ask
-model: claude-sonnet-4-5
-tools: ["readFile", "search"]
+model: Claude Sonnet 5.5 (copilot)
 ---
 
 # Explain Architecture — Employee Service
